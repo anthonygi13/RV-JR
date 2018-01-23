@@ -7,15 +7,21 @@ import time
 
 
 def clignoter_led(duree, periode, pin):
+    """
+    Pour une led rouge il faut une resistance de 434 ohm (si tension de la led est 2V, à verifier)
+    :param duree: duree du clignotement
+    :param periode: temps d'un allumage et d'une extinction
+    :param pin: prendre une pin gpio, la 11 par exemple
+    :return:
+    """
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
     for i in range(int(duree/periode)):
         GPIO.output(pin, not GPIO.input(pin))
-        time.sleep(periode)
-    GPIO.cleanup()
+        time.sleep(periode/2)
+    GPIO.output(pin, GPIO.LOW)
 
-
-def luminosité_led():
+def luminosite_led():
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(12, GPIO.OUT, initial=GPIO.LOW)
     pwm = GPIO.PWM(12, 200)
