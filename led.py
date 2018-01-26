@@ -1,5 +1,5 @@
-# Author: Kari Hichma, Giraudo Anthony                     
-# 23 janvier 2018
+# Author: Giraudo Anthony, Kari Hichma, MacDonald Kilian, Marinho Louise                      
+# 22 janvier 2018
 # led.py
 
 import RPi.GPIO as GPIO
