@@ -1,4 +1,4 @@
-# Author: Giraudo Anthony                     
+# Author: Giraudo Anthony, Kari Hichma                     
 # 22 janvier 2018
 # led.py
 
