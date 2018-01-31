@@ -1,0 +1,14 @@
+Compte rendu  <-  Louise
+
+Fonctionnement des moteurs   <-  Louise, Anthony
+
+Code qui permet de suivre une ligne   <-  Hichma, Kilian
+
+Bout de carton  <- tous vendredi, et ceux qui sont sur le code qui permet de suivre une ligne par la suite  
+
+
+Après :
+
+Code qui permet de suivre une ligne pas boucle, faire demi tour quand on est au bout
+
+Code qui permet de suivre une ligne en huit (possibilité de touner dans n'importe quelle direction à l'intersection)
