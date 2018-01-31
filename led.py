@@ -14,14 +14,18 @@ def clignoter_led(duree, periode, pin):
     :param pin: prendre une pin gpio, la 11 par exemple
     :return:
     """
-    GPIO.setmode(GPIO.BOARD)
+    GPIO.setmode(GPIO.BOARD) #indique la numerotation à utiliser
     GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
     for i in range(int(duree/periode)):
-        GPIO.output(pin, not GPIO.input(pin))
+        GPIO.output(pin, GPIO.HIGH)
         time.sleep(periode/2)
+	GPIO.output(pin, GPIO.LOW)
+	time.sleep(periode/2)
     GPIO.output(pin, GPIO.LOW)
+    GPIO.cleanup()
 
 def luminosite_led():
+    #ça marche pas le input dans le simulateur ça arrete l'envoie du signal (a tester sur la raspberry pi)
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(12, GPIO.OUT, initial=GPIO.LOW)
     pwm = GPIO.PWM(12, 200)
