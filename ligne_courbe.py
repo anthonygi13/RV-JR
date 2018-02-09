@@ -1,23 +1,31 @@
-def SuivreLigneDroite(CapteurD, CapteuG):
-	While True :
-		If capteurD == 1 and CapteurG == 0:
-			T = time.clock()
-			While CapteurD == 1 : 
-				t = time.clock()
-				Tourner (Vg, Vd - K(t - T)) /(Vg, -Vd)
-				CapteurD = input(CapteurD)
-                
-		Elif capteurG == 1 and CapteurG == 0:
-			T = time.clock()
-			While CapteurG == 1:
-				t = time.clock()
-				Tourner (Vg - K(t - T), Vd) /(Vg, -Vd)
-				CapteurG = input(CapteurG)
-                
-		Elif capteurD == 0 and capteurG == 0:
-			Tourner (Vg,Vd)
-			CapteurG = input(CapteurG)
-			CapteurD = input(CapteurD)
-            
-		Else :
-			Break
+import time
+
+
+def tourner(vg, vd):
+    pass
+
+
+def SuivreLigneDroite(capteurD, capteurG, K, Vg, Vd):
+    while True:
+        if capteurD == 1 and capteurG == 0:
+            T = time.clock()
+            while capteurD == 1:
+                t = time.clock()
+                tourner(Vg, Vd - K(t - T)) / (Vg, -Vd)
+                capteurD = input(capteurD)
+
+        elif capteurG == 1 and capteurG == 0:
+            T = time.clock()
+            while capteurG == 1:
+                t = time.clock()
+                tourner(Vg - K(t - T), Vd) / (Vg, -Vd)
+                capteurG = input(capteurG)
+
+        elif capteurD == 0 and capteurG == 0:
+            tourner(Vg, Vd)
+            capteurG = input(capteurG)
+            capteurD = input(capteurD)
+        else:
+            break
+
+
