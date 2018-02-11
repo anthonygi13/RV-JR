@@ -41,7 +41,7 @@ class Robot(Image):
     global fenetre
     """centre de l'image = centre des roues
     les roues sont de part et d autre du centre (l = dimensions[0])"""
-    #a revoir...
+    #a revoir..., tout
     def __init__(self, image, dimensions):
         Image.__init__(self, image, dimensions)
         self.vd = 0 # en m par secondes
@@ -54,9 +54,9 @@ class Robot(Image):
     def mouvement(self):
         """mouvement pendant une seconde avec les equations du mouvement avec va et vb constants"""
         #pas oublier le cas ou phi point vaut 0
-        self.rotation((self.vd - self.vg) / self.dimensions[0])
-        self.deplacer(((self.vd + self.vg)/(2 * (self.vd - self.vg)/self.l))*cos(radian(self.angle)), ((self.vd + self.vg)/(2 * (self.vd - self.vg)/self.l))*sin(radian(self.angle)))
-
+        #petit bug, il part pas exactement de la position innitiale (peut etre equations du mouvement fausses)
+        self.rotation((self.vd - self.vg) / self.l)
+        self.placer_centre(1000 + ((self.vd + self.vg)/(2 * (self.vd - self.vg)/self.l))*cos(radian(self.angle)) - ((self.vd + self.vg)/(2 * (self.vd - self.vg)/self.l)), 500 + ((self.vd + self.vg)/(2 * (self.vd - self.vg)/self.l))*sin(radian(self.angle)))
 
 
 # a faire : convertir metre et pixels, faire une echelle
@@ -66,7 +66,7 @@ fond = pygame.image.load("fond.png")
 
 champi = Robot("champi.png", (75, 75))
 champi.image.set_colorkey((0,0,0))
-champi.vg = 0
+champi.vg = 200
 champi.vd = 100
 
 fenetre.blit(fond, (0, 0))
@@ -94,7 +94,6 @@ while continuer == True:
     fenetre.blit(fond, (0, 0))
     champi.afficher()
     pygame.display.flip()
-    time.sleep(1)
 
 
 
