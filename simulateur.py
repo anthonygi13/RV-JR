@@ -54,7 +54,6 @@ class Robot(Image):
     def mouvement(self):
         """mouvement pendant une seconde avec les equations du mouvement avec va et vb constants"""
         #pas oublier le cas ou phi point vaut 0
-        #petit bug, il part pas exactement de la position innitiale (peut etre equations du mouvement fausses)
         self.rotation((self.vd - self.vg) / self.l)
         self.placer_centre(1000 + ((self.vd + self.vg)/(2 * (self.vd - self.vg)/self.l))*cos(radian(self.angle)) - ((self.vd + self.vg)/(2 * (self.vd - self.vg)/self.l)), 500 + ((self.vd + self.vg)/(2 * (self.vd - self.vg)/self.l))*sin(radian(self.angle)))
 
@@ -70,7 +69,7 @@ champi.vg = 200
 champi.vd = 100
 
 fenetre.blit(fond, (0, 0))
-champi.placer(1000, 500)
+champi.placer_centre(1000, 500)
 champi.afficher()
 
 pygame.display.flip()
