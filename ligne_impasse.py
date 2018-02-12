@@ -8,8 +8,10 @@ def Impasse (capteurG, capteurC, capteurD, K, Vg, Vd, choix):
 	while True:
     	SuivreLigneDroite(capteurD, capteurC, capteurG, K, Vd, Vg)
         if capteurC == 0 :
-        	while capteurC !=1: #il peut pas changer capteurC...
-            	if choix == 'gauche' or choix == 'centre':
+        	while capteurC !=1:
+            	    if choix == 'gauche' or choix == 'centre':
 					tourner(-Vg, Vd)
-                else:
+                    else:
             		tourner(Vg, -Vd)
+		    capteurC = input(capteurC)
+
