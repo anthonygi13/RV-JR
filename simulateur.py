@@ -94,6 +94,8 @@ class Robot2():
         self.coord = self.roue_g.image.get_rect() #fallait bien prendre une image
         self.coord.x = 0
         self.coord.y = 0
+        self.coord_exacte_x = 0
+        self.coord_exacte_y = 0
         self.l = l #pixels
         self.d = d #pixels
         self.r = r
@@ -103,6 +105,8 @@ class Robot2():
     def placer(self, x, y):
         self.coord.x = x
         self.coord.y = y
+        self.coord_exacte_x = x
+        self.coord_exacte_y = y
         self.roue_d.placer_centre(int(x + self.l/2 * cos(radian(self.angle))), int(y - self.l/2 * sin(radian(self.angle)))) # repere classique
         self.roue_g.placer_centre(int(x - self.l/2 * cos(radian(self.angle))), int(y + self.l/2 * sin(radian(self.angle)))) # repere classique comme dans toute la suite
         self.capteur_d.placer_centre(int(x + self.d/2 * cos(radian(self.angle)) - self.r * sin(radian(self.angle))), int(y - self.d/2 * sin(radian(self.angle)) - self.r * cos(radian(self.angle))))
@@ -116,6 +120,8 @@ class Robot2():
         necessite d avoir ete place au prealable
         """
         self.coord = self.coord.move(x, y)
+        self.coord_exacte_x += x
+        self.coord_exacte_y += y
         self.roue_d.deplacer(x, y)
         self.roue_g.deplacer(x, y)
         self.capteur_d.deplacer(x, y)
@@ -128,15 +134,72 @@ class Robot2():
         self.capteur_g.afficher()
 
     def rotation(self, angle):
+        """
+        :param angle:
+        :return:
+        ne pas utiliser placer pour avoir l utilite de coord_exacte
+        """
         self.angle += angle
-        self.placer(self.coord.x, self.coord.y)
+        x = self.coord.x
+        y = self.coord.y
+        self.roue_d.placer_centre(int(x + self.l / 2 * cos(radian(self.angle))),
+                                  int(y - self.l / 2 * sin(radian(self.angle))))
+        self.roue_g.placer_centre(int(x - self.l / 2 * cos(radian(self.angle))), int(
+            y + self.l / 2 * sin(radian(self.angle))))
+        self.capteur_d.placer_centre(int(x + self.d / 2 * cos(radian(self.angle)) - self.r * sin(radian(self.angle))),
+                                     int(y - self.d / 2 * sin(radian(self.angle)) - self.r * cos(radian(self.angle))))
+        self.capteur_g.placer_centre(int(x - self.d / 2 * cos(radian(self.angle)) - self.r * sin(radian(self.angle))),
+                                     int(y + self.d / 2 * sin(radian(self.angle)) - self.r * cos(radian(self.angle))))
 
     def mouvement(self):
         """
         :return:
         mouvement pendant une seconde avec les equations du mouvement avec va et vb constants
         e_x et e_y orientés comme dans un repere classique != repere pygame
-        prb : quand vitesse d'une roue vaut 0, elle se deplace quand meme... revoir le code et les equations du mouvement
+        prb : quand vitesse d'une roue vaut 0, elle se deplace quand meme... c normal, probleme c que les pixels c discret
+        ne pas utiliser les fonctions deplacer et placer dans cette methode, pour pouvoir utiliser coord_exacte
+        """
+
+        if self.vd == self.vg:
+            x = int(-sin(radian(self.angle)) * self.vd)
+            y = int(-cos(radian(self.angle)) * self.vg)
+            self.coord = self.coord.move(x, y)
+            self.roue_d.deplacer(x, y)
+            self.roue_g.deplacer(x, y)
+            self.capteur_d.deplacer(x, y)
+            self.capteur_g.deplacer(x, y)
+
+            self.coord_exacte_x += -sin(radian(self.angle)) * self.vd
+            self.coord_exacte_y += -cos(radian(self.angle)) * self.vg
+
+        else:
+            angle_initial = self.angle
+            self.rotation((self.vd - self.vg) / self.l)
+
+            self.coord_exacte_x += ((self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l)) * cos(
+                radian(self.angle)) - (
+                                          (self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l)) * cos(
+                radian(angle_initial))
+            self.coord_exacte_y += -(
+            ((self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l)) * sin(radian(self.angle))) \
+                                   + (self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l) * sin(
+                radian(angle_initial))
+
+            self.coord.x = int(self.coord_exacte_x)
+            self.coord.y = int(self.coord_exacte_y)
+
+            self.roue_d.placer_centre(int(self.coord_exacte_x + self.l / 2 * cos(radian(self.angle))),
+                                      int(self.coord_exacte_y - self.l / 2 * sin(radian(self.angle))))
+            self.roue_g.placer_centre(int(self.coord_exacte_x - self.l / 2 * cos(radian(self.angle))), int(
+                self.coord_exacte_y + self.l / 2 * sin(radian(self.angle))))
+            self.capteur_d.placer_centre(
+                int(self.coord_exacte_x + self.d / 2 * cos(radian(self.angle)) - self.r * sin(radian(self.angle))),
+                int(self.coord_exacte_y - self.d / 2 * sin(radian(self.angle)) - self.r * cos(radian(self.angle))))
+            self.capteur_g.placer_centre(
+                int(self.coord_exacte_x - self.d / 2 * cos(radian(self.angle)) - self.r * sin(radian(self.angle))),
+                int(self.coord_exacte_y + self.d / 2 * sin(radian(self.angle)) - self.r * cos(radian(self.angle))))
+
+
         """
         if self.vd == self.vg:
             self.deplacer(int(-sin(radian(self.angle)) * self.vd), int(-cos(radian(self.angle)) * self.vg))
@@ -149,6 +212,16 @@ class Robot2():
                 int(-(((self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l)) * sin(radian(self.angle))) +
                 (self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l) * sin(radian(angle_initial))))
 
+            #self.placer(1000 + int(((self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l)) * cos(radian(self.angle)) - (
+                (self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l))),
+                500 + int(-(((self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l)) * sin(radian(self.angle)))))
+
+            #self.placer(
+                1000 + int(((self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l)) * cos(radian(self.angle)) - (
+                    (self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l) * cos(radian(45)))),
+                500 + int(-(((self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l)) * sin(radian(self.angle)))+
+                (self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l) * sin(radian(45))))
+        """
 
 
 
@@ -162,8 +235,8 @@ robot = Robot2("champi.png", "champi.png", (75, 75), (75, 75), 200, 100, 75)
 robot.placer(1000, 500)
 robot.afficher()
 
-robot.vd = 0
-robot.vg = 200
+robot.vd = 500
+robot.vg = 0
 
 pygame.display.flip()
 
