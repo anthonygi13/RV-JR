@@ -223,20 +223,70 @@ class Robot2():
                 (self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l) * sin(radian(45))))
         """
 
+class Terrain():
+    global fenetre
+    def __init__(self, fond):
+        self.chemins = []
+        self.fond = pygame.image.load(fond)
+    def ajouter_chemin(self, image, dimensions, x, y):
+        self.chemins.append(Image(image, dimensions))
+        self.chemins[-1].placer(x, y)
+    def signal(self, capteur):
+        for chemin in self.chemins:
+            if chemin.coord.x <= capteur.coord_centre.x and capteur.coord_centre.x <= chemin.coord.x + chemin.dimensions[0] and chemin.coord.y <= capteur.coord_centre.y and capteur.coord_centre.y <= chemin.coord.y + chemin.dimensions[1]:
+                return True
+        return False
+    def afficher(self):
+        fenetre.blit(self.fond, (0, 0))
+        for chemin in self.chemins:
+            chemin.afficher()
+
 
 
 fenetre = pygame.display.set_mode((1800, 1000))
 
-fond = pygame.image.load("fond.png")
+robot = Robot2("champi.png", "r2d2.jpg", (75, 75), (49, 49), 200, 100, 75)
+terrain = Terrain("blanc.jpg")
+terrain.ajouter_chemin("chemin.png", (100, 800), 800, 100) # faut d abord creer l image du chemin!!!!
+
+robot.placer(1000, 500)
+
+robot.vd = 5
+robot.vg = 5
+
+continuer = True
+while continuer == True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            continuer = False
+
+    if terrain.signal(robot.capteur_d):
+        print("capteur droit capte un truc")
+    if terrain.signal(robot.capteur_g):
+        print("capteur gauche capte un truc")
+
+    if event.type == KEYDOWN:
+        if event.key == K_m:
+            robot.rotation(10)
+
+    robot.mouvement()
+
+    robot.afficher()
+    terrain.afficher()
+    pygame.display.flip()
+
+
+"""
+fond = pygame.image.load("blanc.jpg")
 fenetre.blit(fond, (0, 0))
 
-robot = Robot2("champi.png", "champi.png", (75, 75), (75, 75), 200, 100, 75)
+robot = Robot2("champi.png", "r2d2.jpg", (75, 75), (50, 44), 200, 100, 75)
 
 robot.placer(1000, 500)
 robot.afficher()
 
-robot.vd = 500
-robot.vg = 0
+robot.vd = 5
+robot.vg = 5
 
 pygame.display.flip()
 
@@ -262,7 +312,7 @@ while continuer == True:
     fenetre.blit(fond, (0, 0))
     robot.afficher()
     pygame.display.flip()
-
+"""
 
 
 pygame.quit()
