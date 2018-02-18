@@ -48,32 +48,7 @@ class Image():
     def afficher(self):
         fenetre.blit(self.image, self.coord)
 
-
-class Robot(Image):
-    global fenetre
-    """centre de l'image = centre des roues
-    les roues sont de part et d autre du centre (l = dimensions[0])"""
-    def __init__(self, image, dimensions):
-        Image.__init__(self, image, dimensions)
-        self.vd = 0 # en m par secondes
-        self.vg = 0 # en m par secondes
-        self.angle = 0 # en degré
-        self.l = self.dimensions[0]
-    def rotation(self, angle):
-        self.angle += angle
-        #self.image = pygame.transform.rotate(self.image, angle) #a tester : est ce que ça rotate de angle ou est ce que ça rotate de telle sorte a avoir angle ?
-    def mouvement(self):
-        """mouvement pendant une seconde avec les equations du mouvement avec va et vb constants, e_x et e_y orientés comme dans un repere classique != repere pygame"""
-        #pas oublier le cas ou phi point vaut 0
-        if self.vd == self.vg:
-            self.deplacer(-sin(radian(self.angle)) * self.vd, -cos(radian(self.angle)) * self.vg)
-        else:
-            self.rotation((self.vd - self.vg) / self.l)
-            self.placer_centre(1000 + ((self.vd + self.vg)/(2 * (self.vd - self.vg)/self.l))*cos(radian(self.angle)) - ((self.vd + self.vg)/(2 * (self.vd - self.vg)/self.l)),
-                               500 -(((self.vd + self.vg)/(2 * (self.vd - self.vg)/self.l))*sin(radian(self.angle))))
-
-
-class Robot2():
+class Robot():
     """robot avec deux capteurs"""
     global fenetre
     def __init__(self, image_roue, image_capteur, dimensions_image_roue, dimensions_image_capteur, l, d, r):
@@ -199,30 +174,6 @@ class Robot2():
                 int(self.coord_exacte_x - self.d / 2 * cos(radian(self.angle)) - self.r * sin(radian(self.angle))),
                 int(self.coord_exacte_y + self.d / 2 * sin(radian(self.angle)) - self.r * cos(radian(self.angle))))
 
-
-        """
-        if self.vd == self.vg:
-            self.deplacer(int(-sin(radian(self.angle)) * self.vd), int(-cos(radian(self.angle)) * self.vg))
-        else:
-            angle_initial = self.angle
-            self.rotation((self.vd - self.vg) / self.l)
-            self.deplacer(
-                int(((self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l)) * cos(radian(self.angle)) - (
-                (self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l)) * cos(radian(angle_initial))),
-                int(-(((self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l)) * sin(radian(self.angle))) +
-                (self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l) * sin(radian(angle_initial))))
-
-            #self.placer(1000 + int(((self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l)) * cos(radian(self.angle)) - (
-                (self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l))),
-                500 + int(-(((self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l)) * sin(radian(self.angle)))))
-
-            #self.placer(
-                1000 + int(((self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l)) * cos(radian(self.angle)) - (
-                    (self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l) * cos(radian(45)))),
-                500 + int(-(((self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l)) * sin(radian(self.angle)))+
-                (self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l) * sin(radian(45))))
-        """
-
 class Terrain():
     global fenetre
     def __init__(self, fond):
@@ -245,9 +196,9 @@ class Terrain():
 
 fenetre = pygame.display.set_mode((1800, 1000))
 
-robot = Robot2("champi.png", "r2d2.jpg", (75, 75), (49, 49), 200, 100, 75)
+robot = Robot("champi.png", "r2d2.jpg", (75, 75), (49, 49), 200, 100, 75)
 terrain = Terrain("blanc.jpg")
-terrain.ajouter_chemin("chemin.png", (100, 800), 800, 100) # faut d abord creer l image du chemin!!!!
+terrain.ajouter_chemin("noir.jpg", (100, 479), 500, 200)
 
 robot.placer(1000, 500)
 
@@ -271,48 +222,9 @@ while continuer == True:
 
     robot.mouvement()
 
-    robot.afficher()
     terrain.afficher()
-    pygame.display.flip()
-
-
-"""
-fond = pygame.image.load("blanc.jpg")
-fenetre.blit(fond, (0, 0))
-
-robot = Robot2("champi.png", "r2d2.jpg", (75, 75), (50, 44), 200, 100, 75)
-
-robot.placer(1000, 500)
-robot.afficher()
-
-robot.vd = 5
-robot.vg = 5
-
-pygame.display.flip()
-
-
-continuer = True
-while continuer == True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            continuer = False
-
-
-    if event.type == KEYDOWN:
-        if event.key == K_m:
-            robot.rotation(10)
-            fenetre.blit(fond, (0, 0))
-            robot.afficher()
-            pygame.display.flip()
-
-
-
-    robot.mouvement()
-
-    fenetre.blit(fond, (0, 0))
     robot.afficher()
     pygame.display.flip()
-"""
 
 
 pygame.quit()
