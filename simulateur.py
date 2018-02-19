@@ -126,30 +126,36 @@ class Robot():
         self.capteur_g.placer_centre(int(x - self.d / 2 * cos(radian(self.angle)) - self.r * sin(radian(self.angle))),
                                      int(y + self.d / 2 * sin(radian(self.angle)) - self.r * cos(radian(self.angle))))
 
-    def mouvement(self):
+    def mouvement(self, t):
         """
         :return:
-        mouvement pendant une seconde avec les equations du mouvement avec va et vb constants
+        mouvement pendant t secondes avec les equations du mouvement avec va et vb constants
         e_x et e_y orientés comme dans un repere classique != repere pygame
-        prb : quand vitesse d'une roue vaut 0, elle se deplace quand meme... c normal, probleme c que les pixels c discret
-        ne pas utiliser les fonctions deplacer et placer dans cette methode, pour pouvoir utiliser coord_exacte
+        ne pas utiliser la fonction deplacer dans cette methode, pour pouvoir utiliser coord_exacte
+        ne pas non plus utiliser robot.placer
         """
 
         if self.vd == self.vg:
-            x = int(-sin(radian(self.angle)) * self.vd)
-            y = int(-cos(radian(self.angle)) * self.vg)
-            self.coord = self.coord.move(x, y)
-            self.roue_d.deplacer(x, y)
-            self.roue_g.deplacer(x, y)
-            self.capteur_d.deplacer(x, y)
-            self.capteur_g.deplacer(x, y)
+            self.coord_exacte_x += -sin(radian(self.angle)) * self.vd * t
+            self.coord_exacte_y += -cos(radian(self.angle)) * self.vg * t
 
-            self.coord_exacte_x += -sin(radian(self.angle)) * self.vd
-            self.coord_exacte_y += -cos(radian(self.angle)) * self.vg
+            self.coord.x = int(self.coord_exacte_x)
+            self.coord.y = int(self.coord_exacte_y)
+
+            self.roue_d.placer_centre(int(self.coord_exacte_x + self.l / 2 * cos(radian(self.angle))),
+                                      int(self.coord_exacte_y - self.l / 2 * sin(radian(self.angle))))
+            self.roue_g.placer_centre(int(self.coord_exacte_x - self.l / 2 * cos(radian(self.angle))), int(
+                self.coord_exacte_y + self.l / 2 * sin(radian(self.angle))))
+            self.capteur_d.placer_centre(
+                int(self.coord_exacte_x + self.d / 2 * cos(radian(self.angle)) - self.r * sin(radian(self.angle))),
+                int(self.coord_exacte_y - self.d / 2 * sin(radian(self.angle)) - self.r * cos(radian(self.angle))))
+            self.capteur_g.placer_centre(
+                int(self.coord_exacte_x - self.d / 2 * cos(radian(self.angle)) - self.r * sin(radian(self.angle))),
+                int(self.coord_exacte_y + self.d / 2 * sin(radian(self.angle)) - self.r * cos(radian(self.angle))))
 
         else:
             angle_initial = self.angle
-            self.rotation((self.vd - self.vg) / self.l)
+            self.rotation((self.vd - self.vg) * t / self.l)
 
             self.coord_exacte_x += ((self.vd + self.vg) / (2 * (self.vd - self.vg) / self.l)) * cos(
                 radian(self.angle)) - (
@@ -193,7 +199,107 @@ class Terrain():
             chemin.afficher()
 
 
+def tourner_gauche(robot, k, v):
+    """
+    :param robot:
+    :param k: deceleration en pixel.s**(-2)
+    :param v: vitesse de marche normale du robot
+    :return:
+    """
+    global terrain
 
+    t_i = time.clock()
+    t = t_i
+    while terrain.signal(robot.capteur_g):
+        delta_t = time.clock() - t_i
+        dt = time.clock() - t
+        t = time.clock()
+        robot.vg = v - min(v, k * delta_t)
+        robot.mouvement(dt)
+        terrain.afficher()
+        robot.afficher()
+        pygame.display.flip()
+
+
+def tourner_droite(robot, k, v):
+    global terrain
+
+    t_i = time.clock()
+    t = t_i
+    while terrain.signal(robot.capteur_d):
+        delta_t = time.clock() - t_i
+        dt = time.clock() - t
+        t = time.clock()
+        robot.vd = v - min(v, k * delta_t)
+        robot.mouvement(dt)
+        terrain.afficher()
+        robot.afficher()
+        pygame.display.flip()
+
+def tout_droit(robot, v):
+    global terrain
+
+    robot.vd = v
+    robot.vg = v
+    t = time.clock()
+    while not terrain.signal(robot.capteur_d) and not terrain.signal(robot.capteur_g):
+        dt = time.clock() - t
+        t = time.clock()
+        robot.mouvement(dt)
+        terrain.afficher()
+        robot.afficher()
+        pygame.display.flip()
+
+
+
+
+fenetre = pygame.display.set_mode((1800, 1000))
+
+terrain = Terrain("blanc.jpg")
+terrain.ajouter_chemin("noir.jpg", (100, 479), 500, 200)
+
+robot = Robot("champi.png", "r2d2.jpg", (75, 75), (49, 49), 200, 100, 75)
+
+
+robot.placer(1000, 500)
+
+v = pixel(0.1)
+k = 20
+
+continuer = True
+while continuer == True:
+
+    t_i = time.clock()
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            continuer = False
+
+    terrain.afficher()
+    robot.afficher()
+    pygame.display.flip()
+
+    if event.type == KEYDOWN:
+        if event.key == K_m:
+            robot.rotation(10)
+
+    elif not terrain.signal(robot.capteur_d) and not terrain.signal(robot.capteur_g):
+        robot.vg = v
+        robot.vd = v
+
+    elif terrain.signal(robot.capteur_d) and not terrain.signal(robot.capteur_g):
+        robot.vd = v/2
+
+    elif terrain.signal(robot.capteur_g) and not terrain.signal(robot.capteur_d):
+        robot.vg = v/2
+
+    robot.mouvement(time.clock() - t_i)
+
+pygame.quit()
+
+
+
+"""
 fenetre = pygame.display.set_mode((1800, 1000))
 
 robot = Robot("champi.png", "r2d2.jpg", (75, 75), (49, 49), 200, 100, 75)
@@ -220,7 +326,7 @@ while continuer == True:
         if event.key == K_m:
             robot.rotation(10)
 
-    robot.mouvement()
+    robot.mouvement(1)
 
     terrain.afficher()
     robot.afficher()
@@ -228,3 +334,4 @@ while continuer == True:
 
 
 pygame.quit()
+"""

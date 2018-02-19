@@ -4,59 +4,33 @@ import time
 # je pensais que l utilisation de cette fonction serais un truc du style while (y a pas d'intersection): suivrelignedroite(input(capteurD), input(capteurC), input(capteurG), K, Vd, Vg)
 # mais la c pas compatible
 # quand un variable vaut 1 ou 0 mettez plutot des booleens
+# utilisez des noms de variables clairs, c pas evident t et T...
 
 def tourner(Vg, Vd):
     pass
 
 
 def SuivreLigneDroite(capteurD, capteurC, capteurG, K, Vd, Vg):
-<<<<<<< HEAD
     while capteurC == 1:
         while True:
-            if capteurD == 1 and CapteurG == 0:
+            if capteurD == 1 and capteurG == 0:
                 T = time.clock()
-                while CapteurD == 1:
+                while capteurD == 1:
                     t = time.clock()
-                    tourner(Vg, Vd - K(t - T)) / (Vg, -Vd)
-                    CapteurD = input(CapteurD)
+                    tourner(Vg, Vd - K(t - T)) / (Vg, -Vd) #probleme la
+                    capteurD = input(capteurD)
 
-            elif capteurG == 1 and CapteurG == 0:
+            elif capteurG == 1 and capteurG == 0:
                 T = time.clock()
-                while CapteurG == 1:
+                while capteurG == 1:
                     t = time.clock()
-                    tourner(Vg - K(t - T), Vd) / (Vg, -Vd)
-                    CapteurG = input(CapteurG)
+                    tourner(Vg - K(t - T), Vd) / (Vg, -Vd) #probleme la
+                    capteurG = input(capteurG)
 
             elif capteurD == 0 and capteurG == 0:
                 tourner(Vg, Vd)
-                CapteurG = input(CapteurG)
-                CapteurD = input(CapteurD)
+                capteurG = input(capteurG)
+                capteurD = input(capteurD)
 
             else:
                 break
-=======
-	while capteurC == 1:
-	#capteurC c est un argument de la fonction il va pas changer au cours de l'execution de cette fonction...
-		While True :
-		If capteurD == 1 and CapteurG == 0:
-			T = time.clock()
-			While CapteurD == 1 :
-				t = time.clock()
-				Tourner (Vg, Vd - K(t - T)) /(Vg, -Vd)
-				CapteurD = input(CapteurD)
-                
-		Elif capteurG == 1 and CapteurG == 0:
-			T = time.clock()
-			While CapteurG == 1:
-				t = time.clock()
-				Tourner (Vg - K(t - T), Vd) /(Vg, -Vd)
-				CapteurG = input(CapteurG)
-                
-		Elif capteurD == 0 and capteurG == 0:
-			Tourner (Vg,Vd)
-			CapteurG = input(CapteurG)
-			CapteurD = input(CapteurD)
-            
-		Else :
-			Break
->>>>>>> master
