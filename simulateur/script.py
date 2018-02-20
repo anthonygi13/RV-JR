@@ -19,7 +19,7 @@ robot = Robot("champi.png", "r2d2.jpg", (75, 75), (49, 49), 200, 100, 75)
 robot.placer(0, 500)
 robot.rotation(3 * 90)
 
-v = pixel(0.1)
+v = pixel(0.2)
 k = 20
 
 
@@ -48,11 +48,11 @@ while continuer == True:
         robot.vd = v
 
     elif terrain.signal(robot.capteur_d) and not terrain.signal(robot.capteur_g):
-        robot.vg = 100 * v
+        robot.vg = v * 100
         robot.vd = 0
 
     elif terrain.signal(robot.capteur_g) and not terrain.signal(robot.capteur_d):
-        robot.vd = 100 * v
+        robot.vd = v * 100
         robot.vg = 0
 
     robot.mouvement(time.clock() - t_i)
