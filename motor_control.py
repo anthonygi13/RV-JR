@@ -38,7 +38,7 @@ def controle_moteur(v_g, v_d, inverser_sens_g=False, inverser_sens_d=False):
 
 
     pwm_A.start(0)
-    pwm_B.start(0)
+    pwm_B.start(0) #
 
     pwm_A.ChangeDutyCycle(abs(v_g))
     pwm_B.ChangeDutyCycle(abs(v_d))
