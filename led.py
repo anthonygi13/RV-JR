@@ -19,8 +19,8 @@ def clignoter_led(duree, periode, pin):
     for i in range(int(duree/periode)):
         GPIO.output(pin, GPIO.HIGH)
         time.sleep(periode/2)
-	GPIO.output(pin, GPIO.LOW)
-	time.sleep(periode/2)
+    GPIO.output(pin, GPIO.LOW)
+    time.sleep(periode/2)
     GPIO.output(pin, GPIO.LOW)
     GPIO.cleanup()
 
