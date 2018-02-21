@@ -5,6 +5,7 @@ import RPi.GPIO as GPIO
 from motor_control import *
 
 #pourquoi ne pas avoir utilise les fonctions que vous aviez deja faite comme briques pour cette fonction ? ça rendrait le code plus compact et beacoup plus clair
+#programmation haut niveau ! comprendre le code meme sans les commentaires, code auto suffisant
 
 gauche = 0 #numero des pins a determiner et a changer !
 droite = 0
@@ -15,7 +16,7 @@ GPIO.setup(gauche,GPIO.IN)
 GPIO.setup(droite, GPIO.IN)
 GPIO.setup(centre, GPIO.IN)
 
-
+#parametrer capter blanc et capter noir
 def SuivreLigne (constante, VitesseD, VitesseG, choix):
     capteurG = GPIO.input(gauche)
     capteurD = GPIO.input(droite)
@@ -31,7 +32,7 @@ def SuivreLigne (constante, VitesseD, VitesseG, choix):
                     controle_moteur(VitesseG, VitesseD - constante * (t - T)) # a voir si on continue comme ça
                     capteurD = GPIO.input(droite)
 
-            elif capteurG == GPIO.HIGH and capteurG == GPIO.LOW: #tourner à gauche #capteurG peut pas etre a la fois LOW et HIGH
+            elif capteurG == GPIO.HIGH and capteurD == GPIO.LOW: #tourner à gauche #capteurG peut pas etre a la fois LOW et HIGH
                 T = time.clock()
                 while capteurG == GPIO.HIGH:
 		    #si jamais on est a une intersection en croix, et que le robot detecte la brnche              
