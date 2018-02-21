@@ -4,6 +4,8 @@ import RPi.GPIO as GPIO
 
 from motor_control import *
 
+#pourquoi ne pas avoir utilise les fonctions que vous aviez deja faite comme briques pour cette fonction ? ça rendrait le code plus compact et beacoup plus clair
+
 gauche = 0 #numero des pins a determiner et a changer !
 droite = 0
 centre = 0
