@@ -27,8 +27,8 @@ def controle_moteur(v_g, v_d, inverser_sens_g=False, inverser_sens_d=False):
     IN4 = 35
 
     GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(ENA, GPIO.OUT)
-    GPIO.setup(ENB, GPIO.OUT)
+    GPIO.setup(ENA, GPIO.OUT, initial=GPIO.LOW)
+    GPIO.setup(ENB, GPIO.OUT, initial=GPIO.LOW)
     GPIO.setup(IN1, GPIO.OUT, initial=GPIO.LOW)
     GPIO.setup(IN2, GPIO.OUT, initial=GPIO.LOW)
     GPIO.setup(IN3, GPIO.OUT, initial=GPIO.LOW)
@@ -37,27 +37,20 @@ def controle_moteur(v_g, v_d, inverser_sens_g=False, inverser_sens_d=False):
     pwm_A = GPIO.PWM(ENA, 50)  # frequence a determiner
     pwm_B = GPIO.PWM(ENB, 50)
 
-    pwm_A.start(0)
-    pwm_B.start(0)
-
     if v_g > 0:
-        pwm_A.ChangeDutyCycle(abs(v_g))
         GPIO.output(IN1, GPIO.HIGH)  # rotation sens horaire
         GPIO.output(IN2, GPIO.LOW)
+        pwm_A.start(abs(v_g))
     elif v_g < 0:
-        pwm_A.ChangeDutyCycle(abs(v_g))
-        GPIO.output(IN1, GPIO.LOW)
+        GPIO.output(IN1, GPIO.LOW) # anti horaire
         GPIO.output(IN2, GPIO.HIGH)
-    elif v_g == 0:
-        pwm_A.stop()
+        pwm_A.start(abs(v_g))
 
     if v_d > 0:
-        pwm_B.ChangeDutyCycle(abs(v_d))
         GPIO.output(IN3, GPIO.HIGH)  # rotation sens horaire
         GPIO.output(IN4, GPIO.LOW)
+        pwm_B.start(abs(v_d))
     elif v_d < 0:
-        pwm_B.ChangeDutyCycle(abs(v_d))
-        GPIO.output(IN3, GPIO.LOW)
+        GPIO.output(IN3, GPIO.LOW) # anti horaire
         GPIO.output(IN4, GPIO.HIGH)
-    elif v_d == 0:
-        pwm_B.stop()
+        pwm_B.start(abs(v_d))
