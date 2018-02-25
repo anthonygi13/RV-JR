@@ -14,7 +14,7 @@ fenetre = pygame.display.set_mode((1800, 1000))
 class Image():
     global fenetre
     def __init__(self, image, dimensions):
-        self.image = pygame.image.load(image)
+        self.image = pygame.image.load(image).convert()
         self.dimensions = dimensions
         self.coord = self.image.get_rect()
         self.coord_centre = self.image.get_rect().move(int(dimensions[0]/2), int(dimensions[1]/2))
@@ -165,20 +165,60 @@ class Robot():
                 int(self.coord_exacte_x - self.d / 2 * cos(radian(self.angle)) - self.r * sin(radian(self.angle))),
                 int(self.coord_exacte_y + self.d / 2 * sin(radian(self.angle)) - self.r * cos(radian(self.angle))))
 
+class Chemin_ellipse():
+    def __init__(self, a, b, e):
+        # pas de controle sur l image, on utilise forcement cercle.jpg
+        self.ellipse_interieure = Image("cercle.jpg", (2*a, 2*b))
+        self.ellipse_interieure.image.set_colorkey((255, 255, 255))
+        self.ellipse_interieure.image = pygame.transform.scale(self.ellipse_interieure.image, (2*a, 2*b))
+        self.ellipse_interieure.image.set_colorkey((255, 255, 255))
+        self.ellipse_exterieure = Image("cercle.jpg", (2*a + e, 2*b + e))
+        self.ellipse_exterieure.image.set_colorkey((255, 255, 255))
+        self.ellipse_exterieure.image = pygame.transform.scale(self.ellipse_exterieure.image, (2*a + e, 2*b + e))
+        self.ellipse_exterieure.image.set_colorkey((255, 255, 255))
+        self.a = a
+        self.b = b
+        self.e = e
+        self.coord_centre = self.ellipse_interieure.image.get_rect()
+    def placer_centre(self, x, y):
+        self.ellipse_interieure.placer_centre(x, y)
+        self.ellipse_exterieure.placer_centre(x, y)
+        self.coord_centre.x = x
+        self.coord_centre.y = y
+    def afficher(self):
+        self.ellipse_interieure.afficher()
+        self.ellipse_exterieure.afficher()
+
 class Terrain():
     global fenetre
     def __init__(self, fond):
-        self.chemins = []
+        self.rectangles = []
+        self.ellipses = []
         self.fond = pygame.image.load(fond)
-    def ajouter_chemin(self, image, dimensions, x, y):
-        self.chemins.append(Image(image, dimensions))
-        self.chemins[-1].placer(x, y)
+    def ajouter_rectangle(self, image, dimensions, x, y):
+        # gerer les rectangles comme les ellipses par redimension d image (eventuellement creer une nouvelle classe)
+        self.rectangles.append(Image(image, dimensions))
+        self.rectangles[-1].placer(x, y)
+    def ajouter_ellipse(self, a, b, e, x_centre, y_centre):
+        """
+        :param a: demi axe horizontal de l ellipise interieure
+        :param b: demi axe vertical de l ellipse interieure
+        :param e: largeur du chemin
+        :return:
+        """
+        self.ellipses.append(Chemin_ellipse(a, b, e))
+        self.ellipses[-1].placer_centre(x_centre, y_centre)
     def signal(self, capteur):
-        for chemin in self.chemins:
+        for chemin in self.rectangles:
             if chemin.coord.x <= capteur.coord_centre.x and capteur.coord_centre.x <= chemin.coord.x + chemin.dimensions[0] and chemin.coord.y <= capteur.coord_centre.y and capteur.coord_centre.y <= chemin.coord.y + chemin.dimensions[1]:
+                return True
+        for ellipse in self.ellipses:
+            if (capteur.coord_centre.x - ellipse.coord_centre.x)**2 / ellipse.a**2 + (capteur.coord_centre.y - ellipse.coord_centre.y)**2 / ellipse.b**2 >= 1 and (capteur.coord_centre.x - ellipse.coord_centre.x)**2 / (ellipse.a + ellipse.e)**2 + (capteur.coord_centre.y - ellipse.coord_centre.y)**2 / (ellipse.b + ellipse.e)**2 <= 1:
                 return True
         return False
     def afficher(self):
         fenetre.blit(self.fond, (0, 0))
-        for chemin in self.chemins:
-            chemin.afficher()
+        for rectangle in self.rectangles:
+            rectangle.afficher()
+        for ellipse in self.ellipses:
+            ellipse.afficher()

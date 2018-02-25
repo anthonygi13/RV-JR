@@ -11,17 +11,20 @@ from fonctions import *
 from classes import *
 
 terrain = Terrain("blanc.jpg")
-terrain.ajouter_chemin("chemin.jpg", (1600, 33), 200, 500 - int(33/2))
-
+#terrain.ajouter_rectangle("chemin.jpg", (1600, 33), 200, 500 - int(33/2))
+terrain.ajouter_ellipse(800, 300, 33, 900, 500)
 robot = Robot("champi.png", "r2d2.jpg", (75, 75), (49, 49), 200, 100, 75)
 
 
 robot.placer(0, 500)
 robot.rotation(3 * 90)
 
-v = pixel(0.2)
-k = 20
+robot.roue_g.image.set_colorkey((0,0,0))
+robot.roue_d.image.set_colorkey((0,0,0))
+robot.capteur_d.image.set_colorkey((255, 255, 255))
+robot.capteur_g.image.set_colorkey((255, 255, 255))
 
+v = pixel(0.2)
 
 continuer = True
 while continuer == True:
