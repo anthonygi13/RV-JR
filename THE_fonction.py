@@ -17,9 +17,9 @@ GPIO.setup(droite, GPIO.IN)
 GPIO.setup(centre, GPIO.IN)
 
 #fonction à faire:
-# - tourne droite (quelle argument ??)
+# - tourne droite (quelle argument ?? <- pas d arguments)
 # - tourne gauche
-# - intersection ---------- ok
+# - intersection ---------- ok <- non pas ok..., il faut pas que y ait d arguments et ça doit pas utiliser tourner droite ni tourner gauche qui servent seulement au recalibrage
 # - demi tour
 # - est_dans_le_noir
 
@@ -40,12 +40,12 @@ def demi_tour():
 def actualise_capteur():
     pass
 
-def intersection(VitesseD, VitesseG, choix):
+def intersection(VitesseD, VitesseG, choix): # <- on veut pas d arguments a part peut etre en argument facultatif la vitesse de marche normale du robot, et les positions des capteurs (voir simulateur)
     if choix =='droite':
-        while est_dans_le_noir(gauche)==True:
+        while est_dans_le_noir(capteur_gauche)==True:
             tourne_droite()
     else:
-        while est_dans_le_noir(droite)==True:
+        while est_dans_le_noir(capteur_droite)==True:
             tourne_gauche()
 
 
