@@ -36,20 +36,22 @@ class Image():
 class Robot():
     """robot avec deux capteurs"""
     global fenetre
-    def __init__(self, image_roue, image_capteur, dimensions_image_roue, dimensions_image_capteur, l, d, r):
+    def __init__(self, image_roue, image_capteur, dimensions_image_roue, dimensions_image_capteur, l, d, r, z):
         """
         :param image_roue:
         :param image_capteur:
         :param dimensions_image_roue_d:
         :param dimensions_image_capteur:
         :param l: distance entre les deux roues en pixels
-        :param d: distance entre les deux capteurs en pixels
-        :param r: distance entre milieu entre les roues et milieu entre les capteurs en pixels
+        :param d: distance entre les capteurs gauche droite en pixels
+        :param r: distance entre milieu entre les roues et milieu entre les capteurs gauche droite en pixels
+        :param z: distance entre milieu entre les deux roues et capteur central, en pixel
         """
         self.roue_g = Image(image_roue, dimensions_image_roue)
         self.roue_d = Image(image_roue, dimensions_image_roue)
         self.capteur_g = Image(image_capteur, dimensions_image_capteur)
         self.capteur_d = Image(image_capteur, dimensions_image_capteur)
+        self.capteur_c = Image(image_capteur, dimensions_image_capteur)
         self.angle = 0 # en degré
         self.coord = self.roue_g.image.get_rect() #fallait bien prendre une image
         self.coord.x = 0
@@ -58,6 +60,7 @@ class Robot():
         self.coord_exacte_y = 0
         self.l = l #pixels
         self.d = d #pixels
+        self.z = z
         self.r = r
         self.vd = 0 #en pixels par seconde
         self.vg = 0 #en pixels par seconde
@@ -71,6 +74,7 @@ class Robot():
         self.roue_g.placer_centre(int(x - self.l/2 * cos(radian(self.angle))), int(y + self.l/2 * sin(radian(self.angle)))) # repere classique comme dans toute la suite
         self.capteur_d.placer_centre(int(x + self.d/2 * cos(radian(self.angle)) - self.r * sin(radian(self.angle))), int(y - self.d/2 * sin(radian(self.angle)) - self.r * cos(radian(self.angle))))
         self.capteur_g.placer_centre(int(x - self.d/2 * cos(radian(self.angle)) - self.r * sin(radian(self.angle))), int(y + self.d/2 * sin(radian(self.angle)) - self.r * cos(radian(self.angle))))
+        self.capteur_c.placer_centre(int(x - self.z * sin(radian(self.angle))), int(y - self.z * cos(radian(self.angle))))
 
     def deplacer(self, x, y):
         """
@@ -86,18 +90,20 @@ class Robot():
         self.roue_g.deplacer(x, y)
         self.capteur_d.deplacer(x, y)
         self.capteur_g.deplacer(x, y)
+        self.capteur_c.deplacer(x, y)
 
     def afficher(self):
         self.roue_g.afficher()
         self.roue_d.afficher()
         self.capteur_d.afficher()
         self.capteur_g.afficher()
+        self.capteur_c.afficher()
 
     def rotation(self, angle):
         """
         :param angle:
         :return:
-        ne pas utiliser placer pour avoir l utilite de coord_exacte
+        ne pas utiliser robot.placer pour avoir l utilite de coord_exacte
         """
         self.angle += angle
         x = self.coord.x
@@ -110,6 +116,7 @@ class Robot():
                                      int(y - self.d / 2 * sin(radian(self.angle)) - self.r * cos(radian(self.angle))))
         self.capteur_g.placer_centre(int(x - self.d / 2 * cos(radian(self.angle)) - self.r * sin(radian(self.angle))),
                                      int(y + self.d / 2 * sin(radian(self.angle)) - self.r * cos(radian(self.angle))))
+        self.capteur_c.placer_centre(int(x - self.z * sin(radian(self.angle))), int(y - self.z * cos(radian(self.angle))))
 
     def mouvement(self, t):
         """
@@ -137,6 +144,9 @@ class Robot():
             self.capteur_g.placer_centre(
                 int(self.coord_exacte_x - self.d / 2 * cos(radian(self.angle)) - self.r * sin(radian(self.angle))),
                 int(self.coord_exacte_y + self.d / 2 * sin(radian(self.angle)) - self.r * cos(radian(self.angle))))
+            self.capteur_c.placer_centre(
+                int(self.coord_exacte_x - self.z * sin(radian(self.angle))),
+                int(self.coord_exacte_y - self.z * cos(radian(self.angle))))
 
         else:
             angle_initial = self.angle
@@ -164,16 +174,20 @@ class Robot():
             self.capteur_g.placer_centre(
                 int(self.coord_exacte_x - self.d / 2 * cos(radian(self.angle)) - self.r * sin(radian(self.angle))),
                 int(self.coord_exacte_y + self.d / 2 * sin(radian(self.angle)) - self.r * cos(radian(self.angle))))
+            self.capteur_c.placer_centre(
+                int(self.coord_exacte_x - self.z * sin(radian(self.angle))),
+                int(self.coord_exacte_y - self.z * cos(radian(self.angle))))
+
 
 class Chemin_ellipse():
     def __init__(self, a, b, e):
         # pas de controle sur l image, on utilise forcement cercle.jpg
         self.ellipse_interieure = Image("cercle.jpg", (2*a, 2*b))
-        self.ellipse_interieure.image.set_colorkey((255, 255, 255))
+        #self.ellipse_interieure.image.set_colorkey((255, 255, 255))
         self.ellipse_interieure.image = pygame.transform.scale(self.ellipse_interieure.image, (2*a, 2*b))
         self.ellipse_interieure.image.set_colorkey((255, 255, 255))
         self.ellipse_exterieure = Image("cercle.jpg", (2*a + e, 2*b + e))
-        self.ellipse_exterieure.image.set_colorkey((255, 255, 255))
+        #self.ellipse_exterieure.image.set_colorkey((255, 255, 255))
         self.ellipse_exterieure.image = pygame.transform.scale(self.ellipse_exterieure.image, (2*a + e, 2*b + e))
         self.ellipse_exterieure.image.set_colorkey((255, 255, 255))
         self.a = a
@@ -189,15 +203,29 @@ class Chemin_ellipse():
         self.ellipse_interieure.afficher()
         self.ellipse_exterieure.afficher()
 
+class Chemin_rectangle():
+    def __init__(self, taille_x, taille_y):
+        self.rectangle = Image("chemin.jpg", (taille_x, taille_y))
+        self.rectangle.image = pygame.transform.scale(self.rectangle.image, (taille_x, taille_y))
+        self.coord = self.rectangle.coord
+        self.taille_x = taille_x
+        self.taille_y = taille_y
+    def placer(self, x, y):
+        self.rectangle.placer(x, y)
+        self.coord.x = x
+        self.coord.y = y
+    def afficher(self):
+        self.rectangle.afficher()
+
 class Terrain():
     global fenetre
     def __init__(self, fond):
         self.rectangles = []
         self.ellipses = []
         self.fond = pygame.image.load(fond)
-    def ajouter_rectangle(self, image, dimensions, x, y):
+    def ajouter_rectangle(self, dimensions, x, y):
         # gerer les rectangles comme les ellipses par redimension d image (eventuellement creer une nouvelle classe)
-        self.rectangles.append(Image(image, dimensions))
+        self.rectangles.append(Chemin_rectangle(dimensions[0], dimensions[1]))
         self.rectangles[-1].placer(x, y)
     def ajouter_ellipse(self, a, b, e, x_centre, y_centre):
         """
@@ -210,7 +238,7 @@ class Terrain():
         self.ellipses[-1].placer_centre(x_centre, y_centre)
     def signal(self, capteur):
         for chemin in self.rectangles:
-            if chemin.coord.x <= capteur.coord_centre.x and capteur.coord_centre.x <= chemin.coord.x + chemin.dimensions[0] and chemin.coord.y <= capteur.coord_centre.y and capteur.coord_centre.y <= chemin.coord.y + chemin.dimensions[1]:
+            if chemin.coord.x <= capteur.coord_centre.x and capteur.coord_centre.x <= chemin.coord.x + chemin.taille_x and chemin.coord.y <= capteur.coord_centre.y and capteur.coord_centre.y <= chemin.coord.y + chemin.taille_y:
                 return True
         for ellipse in self.ellipses:
             if (capteur.coord_centre.x - ellipse.coord_centre.x)**2 / ellipse.a**2 + (capteur.coord_centre.y - ellipse.coord_centre.y)**2 / ellipse.b**2 >= 1 and (capteur.coord_centre.x - ellipse.coord_centre.x)**2 / (ellipse.a + ellipse.e)**2 + (capteur.coord_centre.y - ellipse.coord_centre.y)**2 / (ellipse.b + ellipse.e)**2 <= 1:
