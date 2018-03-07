@@ -56,6 +56,9 @@ def intersection(VitesseG, VitesseD, choix): #le choix peut aussi être 'centre'
     if choix =='droite':
         while est_dans_le_noir(gauche)==True:
             tourne_droite(VitesseG, VitesseD)
+    if choix=='centre':
+        while est_dans_le_noir(gauche)==True and est_dans_le_noir(droite)==True
+            avance(VitesseG, VitesseG)
     else:
         while est_dans_le_noir(droite)==True:
             tourne_gauche(VitesseG, VitesseD)
