@@ -16,6 +16,9 @@ GPIO.setup(gauche, GPIO.IN)
 GPIO.setup(droite, GPIO.IN)
 GPIO.setup(centre, GPIO.IN)
 
+noir = GPIO.LOW
+blanc = GPIO.HIGH
+
 #fonction à faire:
 # - tourne droite (quelle argument ??)
 # - tourne gauche
@@ -24,38 +27,73 @@ GPIO.setup(centre, GPIO.IN)
 # - est_dans_le_noir
 
 # Structure du programme à modifier avec les differents cas
-
-def est_dans_le_noir():
+def controle_moteur(VitesseG, VitesseD):
     pass
 
-def tourne_droite():
-    pass
+def est_dans_le_noir(capteur):
+    return capteur == noir
 
-def tourne_gauche():
-    pass
+def avance (VitesseG, VitesseD):
+    controle_moteur(VitesseG, VitesseD)
 
-def demi_tour():
-    pass
+def tourne_droite(VitesseG, VitesseD):
+    controle_moteur(VitesseG, -VitesseD)
 
-def actualise_capteur():
-    pass
+def tourne_gauche(VitesseG, VitesseD):
+    controle_moteur(-VitesseG, VitesseD)
 
-def intersection(VitesseD, VitesseG, choix):
+def demi_tour(VitesseG, VitesseD, choix):
+    if choix == 'gauche' or choix == 'centre':
+        tourne_gauche(VitesseG, VitesseD)
+    else :
+        tourne_droite(VitesseG, VitesseD)
+
+
+def actualise_capteur(num_capteur):
+    return GPIO.input(num_capteur)
+
+def intersection(VitesseG, VitesseD, choix): #le choix peut aussi être 'centre', auquel cas le robot ira en face
     if choix =='droite':
         while est_dans_le_noir(gauche)==True:
-            tourne_droite()
+            tourne_droite(VitesseG, VitesseD)
     else:
         while est_dans_le_noir(droite)==True:
-            tourne_gauche()
+            tourne_gauche(VitesseG, VitesseD)
+
+
 
 
 
 # parametrer capter blanc et capter noir
 def SuivreLigne(constante, VitesseD, VitesseG, choix): #il va falloir modifier les cas non ?
-    capteurG = GPIO.input(gauche)
-    capteurD = GPIO.input(droite)
-    capteurC = GPIO.input(centre)
+    capteurG = actualise_capteur(gauche)
+    capteurC = actualise_capteur(centre)
+    capteurD = actualise_capteur(droite)
+
     while True:  # boucle infinie, on n'a pas de cas terminal pour l'instant (à voir plus tard...) STOP AVEC CLAVIER
+        if not est_dans_le_noir(capteurG) and est_dans_le_noir(capteurC) and not est_dans_le_noir(capteurD):
+            avance(VitesseD, VitesseG)
+
+        elif est_dans_le_noir(capteurG) and est_dans_le_noir(capteurC) and not est_dans_le_noir(capteurD) :
+            tourne_gauche(VitesseG, VitesseD)
+
+        elif not est_dans_le_noir(capteurG) and est_dans_le_noir(capteurC) and est_dans_le_noir(capteurD):
+            tourne_droite(VitesseG, VitesseD)
+
+        elif est_dans_le_noir(capteurG) and est_dans_le_noir(capteurC) and est_dans_le_noir(capteurD) :
+            intersection(VitesseD, VitesseG, choix)
+
+        elif not est_dans_le_noir(capteurC) :
+            demi_tour(VitesseG, VitesseD, choix)
+
+        capteurG = actualise_capteur(gauche)
+        capteurC = actualise_capteur(centre)
+        capteurD = actualise_capteur(droite)
+
+
+
+'''''''''''
+
         while capteurC == GPIO.HIGH:
             if capteurD == GPIO.HIGH and capteurG == GPIO.LOW:  # tourner à droite
                 T = time.clock()
@@ -86,6 +124,7 @@ def SuivreLigne(constante, VitesseD, VitesseG, choix): #il va falloir modifier l
 
         # tous les capteurs sont dans le noir = intersection
         # choix = choix de là où le robot tourne = 'gauche', 'droite' ou 'centre'
+
         if capteurD == GPIO.HIGH and capteurC == GPIO.HIGH:  # capteurG faut pas qu'il soit dans le noir ?
             est_passe_blanc = False  # variable permettant de savoir si le capteur centrale est déjà passé dans le blanc ou pas
             while not est_passe_blanc or capteurC != GPIO.HIGH:  # la boucle s'arrête lorsque le capteur revient dans le noir après être passé par le blanc
@@ -108,3 +147,4 @@ def SuivreLigne(constante, VitesseD, VitesseG, choix): #il va falloir modifier l
             else:
                 controle_moteur(VitesseG, -VitesseD)
                 capteurC = GPIO.input(centre)
+'''''''''''
