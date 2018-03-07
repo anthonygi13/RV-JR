@@ -37,10 +37,10 @@ def avance (VitesseG, VitesseD):
     controle_moteur(VitesseG, VitesseD)
 
 def tourne_droite(VitesseG, VitesseD):
-    controle_moteur(VitesseG, -VitesseD)
+    controle_moteur(VitesseG, 0)
 
 def tourne_gauche(VitesseG, VitesseD):
-    controle_moteur(-VitesseG, VitesseD)
+    controle_moteur(0, VitesseD)
 
 def demi_tour(VitesseG, VitesseD, choix):
     if choix == 'gauche' or choix == 'centre':
