@@ -20,9 +20,9 @@ noir = GPIO.LOW
 blanc = GPIO.HIGH
 
 #fonction à faire:
-# - tourne droite (quelle argument ??)
+# - tourne droite (quelle argument ?? <- pas d arguments)
 # - tourne gauche
-# - intersection ---------- ok
+# - intersection ---------- ok <- non pas ok..., il faut pas que y ait d arguments et ça doit pas utiliser tourner droite ni tourner gauche qui servent seulement au recalibrage
 # - demi tour
 # - est_dans_le_noir
 
