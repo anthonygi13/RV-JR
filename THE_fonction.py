@@ -1,6 +1,7 @@
 import time
 
 import RPi.GPIO as GPIO
+import pygame
 
 from motor_control import *
 
@@ -74,7 +75,12 @@ def SuivreLigne(constante, VitesseD, VitesseG, choix): #il va falloir modifier l
     capteurD = actualise_capteur(droite)
 
     while True:  # boucle infinie, on n'a pas de cas terminal pour l'instant (à voir plus tard...) STOP AVEC CLAVIER
-        if not est_dans_le_noir(capteurG) and est_dans_le_noir(capteurC) and not est_dans_le_noir(capteurD):
+        if pygame.event.type == pygame.KEYDOWN:
+            if pygame.event.key == pygame.K_s:
+                controle_moteur(0, 0)
+                break
+
+        elif not est_dans_le_noir(capteurG) and est_dans_le_noir(capteurC) and not est_dans_le_noir(capteurD):
             avance(VitesseD, VitesseG)
 
         elif est_dans_le_noir(capteurG) and est_dans_le_noir(capteurC) and not est_dans_le_noir(capteurD) :
