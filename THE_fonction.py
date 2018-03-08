@@ -1,6 +1,7 @@
 import time
 
 import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BCM)
 import pygame
 
 from motor_control import *
@@ -19,6 +20,14 @@ GPIO.setup(centre, GPIO.IN)
 
 noir = GPIO.LOW
 blanc = GPIO.HIGH
+
+
+
+
+def actualise_capteurs(capteurG, capteurC, capteurD):
+    capteurG = GPIO.input()  #Faudra mettre le numéro des pins des capteurs correpondant dans les parenthèses
+    capteurC = GPIO.input()
+    capteurD = GPIO.input()
 
 #fonction à faire:
 # - tourne droite (quelle argument ?? <- pas d arguments)
@@ -49,9 +58,17 @@ def demi_tour(VitesseG, VitesseD, choix):
     else :
         tourne_droite(VitesseG, VitesseD)
 
+#Pareil, faudra mettre le numéro des pins des capteurs à la place des '??', chaque pin dans chaque cas
+#(par exemple) :
+GPIO.add_event_detect('??', GPIO.RISING, callback=actualise_capteurs) #pin de capteurG
+GPIO.add_event_detect('??', GPIO.RISING, callback=actualise_capteurs) #pin de capteurC
+GPIO.add_event_detect('??', GPIO.RISING, callback=actualise_capteurs) #pin de capteurD
 
-def actualise_capteur(num_capteur):
-    return GPIO.input(num_capteur)
+GPIO.add_event_detect('??', GPIO.FALLING, callback=actualise_capteurs) #pin de capteurG
+GPIO.add_event_detect('??', GPIO.FALLING, callback=actualise_capteurs) #pin de capteurC
+GPIO.add_event_detect('??', GPIO.FALLING, callback=actualise_capteurs) #pin de capteurD
+
+
 
 def intersection(VitesseG, VitesseD, choix): #le choix peut aussi être 'centre', auquel cas le robot ira en face
     if choix =='droite':
