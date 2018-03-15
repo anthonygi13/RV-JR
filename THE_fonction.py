@@ -6,7 +6,6 @@ import pygame
 
 from motor_control import *
 
-# pourquoi ne pas avoir utilise les fonctions que vous aviez deja faite comme briques pour cette fonction ? ça rendrait le code plus compact et beacoup plus clair
 # programmation haut niveau ! comprendre le code meme sans les commentaires, code auto suffisant
 
 gauche = 0  # numero des pins a determiner et a changer !
@@ -30,7 +29,7 @@ def actualise_capteurs(capteurG, capteurC, capteurD):
     capteurD = GPIO.input()
 
 #fonction à faire:
-# - tourne droite (quelle argument ?? <- pas d arguments)
+# - tourne droite (quel argument ?? <- pas d arguments)
 # - tourne gauche
 # - intersection ---------- ok <- non pas ok..., il faut pas que y ait d arguments et ça doit pas utiliser tourner droite ni tourner gauche qui servent seulement au recalibrage
 # - demi tour
@@ -78,8 +77,9 @@ def intersection(VitesseG, VitesseD, choix): #le choix peut aussi être 'centre'
         while est_dans_le_noir(gauche)==True and est_dans_le_noir(droite)==True
             avance(VitesseG, VitesseG)
     else:
-        while est_dans_le_noir(droite)==True:
-            tourne_gauche(VitesseG, VitesseD)
+        while est_dans_le_noir(capteur_droite)==True:
+            tourne_gauche()
+    #et tout droit ?
 
 
 
