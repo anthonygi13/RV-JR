@@ -105,9 +105,9 @@ class Robot:
                 pass
             if not self.capteur_centre.est_dans_le_noir():
                 if choix_2 == "droite":
-                    self.controle_moteur(self.vitesse * self.coeff, -(self.vitesse * 100 * 0.3625))
+                    self.controle_moteur(self.vitesse * self.coeff, -(self.vitesse * self.coeff * 0.3625))
                 elif choix_2 == "gauche":
-                    self.controle_moteur(-(self.vitesse * 100 * 0.3625), self.vitesse * 100)
+                    self.controle_moteur(-(self.vitesse * self.coeff * 0.3625), self.vitesse * self.coeff)
                 while not self.capteur_centre.est_dans_le_noir():
                     pass
 
