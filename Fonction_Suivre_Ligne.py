@@ -1,14 +1,9 @@
 import time
 
 import RPi.GPIO as GPIO
-
-GPIO.setmode(GPIO.BCM)
 import pygame
 
 from motor_control import *
-
-# pourquoi ne pas avoir utilise les fonctions que vous aviez deja faite comme briques pour cette fonction ? ça rendrait le code plus compact et beacoup plus clair
-# programmation haut niveau ! comprendre le code meme sans les commentaires, code auto suffisant
 
 #DEFITION DES PARAMETRES (valeurs à rentrer ici)
 
@@ -40,8 +35,6 @@ blanc = GPIO.HIGH
 # - demi tour
 # - est_dans_le_noir
 
-# Structure du programme à modifier avec les differents cas
-
 def actualise_capteurs(capteurG, capteurC, capteurD):
     capteurAG = GPIO.input() # Faudra mettre le numéro des pins des capteurs correpondant dans les parenthèses
     capteurG = GPIO.input()
@@ -68,7 +61,6 @@ def tourne_droite(VitesseG, VitesseD):
 
 def tourne_gauche(VitesseG, VitesseD):
     controle_moteur(0, VitesseD)
-
 
 def demi_tour(VitesseG, VitesseD, choix):
     if choix == 'gauche' or choix == 'centre':
@@ -97,7 +89,7 @@ def intersection(VitesseG, VitesseD, choix):  # le choix peut aussi être 'centr
         while est_dans_le_noir(gauche) == True:
             tourne_droite(VitesseG, VitesseD)
     if choix == 'centre':
-        while est_dans_le_noir(gauche) == True and est_dans_le_noir(droite) == True
+        while est_dans_le_noir(gauche) == True and est_dans_le_noir(droite) == True:
             avance(VitesseG, VitesseG)
     else:
         while est_dans_le_noir(droite) == True:

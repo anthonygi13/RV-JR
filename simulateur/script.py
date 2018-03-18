@@ -11,9 +11,14 @@ from fonctions import *
 from classes import *
 
 terrain = Terrain("blanc.jpg")
-terrain.ajouter_ellipse(800, 300, 50, 900, 500)
+
+#terrain.ajouter_ellipse(800, 300, 50, 900, 500)
+
 #terrain.ajouter_rectangle((1600, 50), 0, 500)
-#sterrain.ajouter_rectangle((50, 1000), 900, 0)
+#terrain.ajouter_rectangle((50, 1000), 900, 0)
+
+terrain.ajouter_rectangle((1000, 50), 0, 500)
+#terrain.ajouter_rectangle((50, 1000), 1000, 0)
 
 robot = Robot("champi.png", "r2d2.jpg", (75, 75), (49, 49), 200, 55, 50, 75)
 
@@ -32,8 +37,9 @@ robot.capteur_d.image.set_colorkey((255, 255, 255))
 robot.capteur_g.image.set_colorkey((255, 255, 255))
 robot.capteur_c.image.set_colorkey((255, 255, 255))
 
-v = pixel(0.2)
-choix = "droite"
+v = pixel(0.05)
+choix = "gauche"
+choix2 = "droite"
 
 continuer = True
 while continuer == True:
@@ -52,25 +58,22 @@ while continuer == True:
         if event.key == K_s:
             robot.vg = 0
             robot.vd = 0
-            print(terrain.signal(robot.capteur_c))
+            #print(terrain.signal(robot.capteur_c))
         if event.key == K_m:
             robot.rotation(10)
 
-    # a arranger avec le nouvel algo, la c juste pour le test
-
-    elif not terrain.signal(robot.capteur_d) and not terrain.signal(robot.capteur_g):
-        robot.vg = v
-        robot.vd = v
-
     elif terrain.signal(robot.capteur_d) and not terrain.signal(robot.capteur_g):
+        print("droite")
         robot.vg = v * 100
         robot.vd = 0
 
     elif terrain.signal(robot.capteur_g) and not terrain.signal(robot.capteur_d):
+        print("gauche")
         robot.vd = v * 100
         robot.vg = 0
 
     elif terrain.signal(robot.capteur_g) and terrain.signal(robot.capteur_d) and terrain.signal(robot.capteur_c):
+        print("intersection")
         if choix == "droite":
             robot.vg = v * 100
             robot.vd = - (robot.vg * (robot.l - robot.d)) / (2 * robot.l)
@@ -80,6 +83,30 @@ while continuer == True:
         elif choix == "tout droit":
             robot.vd = v
             robot.vg = v
+
+    elif not terrain.signal(robot.capteur_c):
+        print("debut")
+        while not terrain.signal(robot.capteur_c):
+            t_i = time.clock()
+            terrain.afficher()
+            robot.afficher()
+            pygame.display.flip()
+            if choix == "tout droit":
+                if choix2 == "droite":
+                    robot.vg = v * 100
+                    robot.vd = - (robot.vg * (robot.l - robot.d)) / (2 * robot.l)
+                elif choix2 == "gauche":
+                    robot.vd = v * 100
+                    robot.vg = - (robot.vd * (robot.l - robot.d)) / (2 * robot.l)
+            else:
+                robot.vd = 0
+                robot.vg = v * 100
+            robot.mouvement(time.clock() - t_i)
+        print("fin")
+
+    else:
+        robot.vg = v
+        robot.vd = v
 
     robot.mouvement(time.clock() - t_i)
 
