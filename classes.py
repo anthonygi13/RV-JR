@@ -61,8 +61,8 @@ class Robot:
         GPIO.setup(IN3, GPIO.OUT, initial=GPIO.LOW)
         GPIO.setup(IN4, GPIO.OUT, initial=GPIO.LOW)
 
-        pwm_A = GPIO.PWM(ENA, 50)  # frequence a determiner
-        pwm_B = GPIO.PWM(ENB, 50)
+        pwm_A = GPIO.PWM(ENA, 8)  # frequence a determiner
+        pwm_B = GPIO.PWM(ENB, 8)
 
         if vitesse_gauche > 0:
             GPIO.output(IN1, GPIO.HIGH)  # rotation sens horaire
@@ -113,9 +113,4 @@ class Robot:
 
     def tout_droit(self):
         self.controle_moteur(self.vitesse, self.vitesse)
-
-
-
-
-
 

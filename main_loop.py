@@ -5,6 +5,9 @@
 import RPi.GPIO as GPIO
 import pygame
 
+# utiliser callback
+# 5 capteurs
+
 GPIO.setmode(GPIO.BOARD)
 
 from classes import *

@@ -12,12 +12,12 @@ from classes import *
 
 terrain = Terrain("blanc.jpg")
 
-#terrain.ajouter_ellipse(800, 300, 50, 900, 500)
+terrain.ajouter_ellipse(800, 300, 50, 900, 500)
 
 #terrain.ajouter_rectangle((1600, 50), 0, 500)
 #terrain.ajouter_rectangle((50, 1000), 900, 0)
 
-terrain.ajouter_rectangle((1000, 50), 0, 500)
+#terrain.ajouter_rectangle((1000, 50), 0, 500)
 #terrain.ajouter_rectangle((50, 1000), 1000, 0)
 
 robot = Robot("champi.png", "r2d2.jpg", (75, 75), (49, 49), 200, 55, 50, 75)
@@ -37,8 +37,8 @@ robot.capteur_d.image.set_colorkey((255, 255, 255))
 robot.capteur_g.image.set_colorkey((255, 255, 255))
 robot.capteur_c.image.set_colorkey((255, 255, 255))
 
-v = pixel(0.05)
-choix = "gauche"
+v = pixel(0.2)
+choix = "tout droit"
 choix2 = "droite"
 
 continuer = True
@@ -84,6 +84,7 @@ while continuer == True:
             robot.vd = v
             robot.vg = v
 
+
     elif not terrain.signal(robot.capteur_c):
         print("debut")
         while not terrain.signal(robot.capteur_c):
@@ -99,7 +100,7 @@ while continuer == True:
                     robot.vd = v * 100
                     robot.vg = - (robot.vd * (robot.l - robot.d)) / (2 * robot.l)
             else:
-                robot.vd = 0
+                robot.vd = - v *100
                 robot.vg = v * 100
             robot.mouvement(time.clock() - t_i)
         print("fin")
