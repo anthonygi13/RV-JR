@@ -1,0 +1,99 @@
+import time
+
+import RPi.GPIO as GPIO
+
+from motor_control import *
+
+gauche = 0 #numero des pins a determiner et a changer !
+droite = 0
+centre = 0
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(gauche,GPIO.IN)
+GPIO.setup(droite, GPIO.IN)
+GPIO.setup(centre, GPIO.IN)
+
+def SuivreLigne (capteurG, capteurC, capteurD, constante, VitesseD, VitesseG, choix):  #ça doit pas prendre en arguments capteurG, capteurC, capteurD. La fonction doit marcher sans ces arguments, ça simplifie l'utilisation
+    while True: #boucle infinie, on n'a pas de cas terminal pour l'instant (à voir plus tard...)
+        while capteurC == GPIO.HIGH:
+            if capteurD == GPIO.HIGH and capteurG == GPIO.LOW: #tourner à droite
+                T = time.clock()
+                while capteurD == 1: #ça peut pas valloir 1
+		    #si jamais on est a une intersection en croix, et que le robot detecte la brnche droite une fraction de seconde avant bah la il va tourner a droite...
+                    t = time.clock()
+                    controle_moteur(VitesseG, VitesseD - constante * (t - T))# a voir si on continue comme ça
+                    capteurD = input(capteurD)#a changer
+
+            elif capteurG == 1 and capteurG == 0: #tourner à gauche #ça peut pas valloir 1 ou 0 #y a un soucis
+                T = time.clock()
+                while capteurG == 1: #ça peut pas valloir 1
+			#si jamais on est a une intersection en croix, et que le robot detecte la brnche gauche une fraction de seconde avant bah la il va tourner a gauche...
+                    t = time.clock()
+                    controle_moteur(VitesseG - constante * (t - T), VitesseD)# a voir si on continue comme ça
+                    capteurG = input(capteurG) #a changer
+
+            elif capteurD == 0 and capteurG == 0: #continuer tout droit #ça peut pas valloir 0
+                controle_moteur(VitesseG, VitesseD)
+                capteurG = input(capteurG)#a changer
+                capteurD = input(capteurD)#a changer
+
+            else:
+                break
+
+        # tous les capteurs sont dans le noir = intersection
+        #choix = choix de là où le capteur tourne = 'gauche', 'droite' ou 'centre'
+        if capteurD == 1 and capteurC == 1 : #ça peut jamais valoir 1 #et capteurG faut pas qu'il soit dans le noir ?
+            est_passe_blanc = False #variable permettant de savoir si le capteur centrale est déjà passé dans le blanc ou pas
+            while not est_passe_blanc or capteurC != 1: #la boucle s'arrête lorsque le capteur revient dans le noir après être passé par le blanc
+                if choix == 'gauche':
+                    controle_moteur(-VitesseG, VitesseD)
+                elif choix == 'droite':
+                    controle_moteur(VitesseG, -VitesseD)
+                else:
+                    controle_moteur(VitesseG, VitesseD)
+                    capteurC == input(capteurC) #changer ça
+
+                if capteurC == 0: #ça peut pas valloir 0
+                    est_passe_blanc = True
+
+
+        #tous les capteurs sont dans le blanc = demi-tour
+	#y a aucune condition qui dit que tout les capteurs sont dans le blanc là
+        while capteurC != 1: #ça peut pas valloir 1
+            if choix == 'gauche' or choix == 'centre': #a quoi sert le choix ? c pas juste un demi tour ?
+                controle_moteur(-VitesseG, VitesseD)
+            else:
+                controle_moteur(VitesseG, -VitesseD)
+                capteurC = input(capteurC) # a changer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

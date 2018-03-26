@@ -8,7 +8,7 @@ import time
 pygame.init()
 from math import cos
 from math import sin
-from fonctions import *
+from conversions import *
 
 fenetre = pygame.display.set_mode((1800, 1000))
 fond = pygame.image.load("terrain.png")
