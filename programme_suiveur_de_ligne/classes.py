@@ -11,8 +11,9 @@ class Capteur:
     def __init__(self, gpio):
         self.gpio = gpio
         GPIO.setup(gpio, GPIO.IN)
+	self.etat = GPIO.input(gpio)
 
-    def actualise(self):
+    def actualiser_etat(self):
         self.etat = GPIO.input(self.gpio)
 
     def est_dans_le_noir(self):
@@ -117,28 +118,8 @@ class Robot:
     def tout_droit(self):
         self.controle_moteur(self.vitesse, self.vitesse)
 
+    def actualiser_etat_capteurs(self):
+        self.capteur_centre.actualiser_etat()
+        self.capteur_gauche.actualiser_etat()
+        self.capteur_droit.actualiser_etat()
 
-def actalise_capteurs():
-    capteurAG.actualise()
-    capteurG.actualise()
-    capteurC.actualise()
-    capteurD.actualise()
-    capteurAD.actualise()
-
-arriere_gauche = 0 # numero des pins a determiner et a changer !
-gauche = 0
-centre = 0
-droite = 0
-arriere_droite = 0
-
-capteurAG = Capteur(arriere_gauche)
-capteurG = Capteur(gauche)
-capteurC = Capteur(centre)
-capteurD = Capteur(droite)
-capteurAD = Capteur(arriere_droite)
-
-GPIO.add_event_detect('??', GPIO.RISING, callback=actalise_capteurs(), bouncetime =20)
-GPIO.add_event_detect('??', GPIO.RISING, callback=actalise_capteurs(), bouncetime =20)
-GPIO.add_event_detect('??', GPIO.RISING, callback=actalise_capteurs(), bouncetime =20)
-GPIO.add_event_detect('??', GPIO.RISING, callback=actalise_capteurs(), bouncetime =20)
-GPIO.add_event_detect('??', GPIO.RISING, callback=actalise_capteurs(), bouncetime =20)
