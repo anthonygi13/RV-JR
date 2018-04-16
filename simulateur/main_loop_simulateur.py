@@ -7,6 +7,7 @@ from pygame.locals import *
 pygame.init()
 from conversions import *
 from classes import *
+import time
 
 #"champi.png", "r2d2.jpg", (75, 75), (49, 49), 200, 55, 50, 75
 #def __init__(self, image_roue, image_capteur, dimensions_image_roue, dimensions_image_capteur, l, d, r, z, vitesse_normale, coeff):
@@ -25,7 +26,7 @@ z = (3 * largeur_route) // 2 # distance entre milieu entre les deux roues et cap
 
 coeff = 100
 vitesse_de_marche = pixel(0.2)
-choix_1 = "droite"
+choix_1 = "tout droit"
 choix_2 = "droite"
 
 robot = Robot(image_roue, image_capteur, dimensions_image_roue, dimensions_image_capteur, l, d, r, z, vitesse_de_marche, coeff)
