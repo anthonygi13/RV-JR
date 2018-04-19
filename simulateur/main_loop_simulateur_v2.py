@@ -47,6 +47,7 @@ continuer = True
 rotation = False
 stop = False
 while continuer: # boucle principale
+
     t_i = time.clock()
 
     for event in pygame.event.get():
@@ -91,10 +92,11 @@ while continuer: # boucle principale
     else:
         robot.tout_droit()
 
-    # affichage des images deplacees
+    # affichage des images
     fenetre.blit(fond, (0, 0))
     robot.afficher()
     pygame.display.flip()
-    robot.mouvement(time.clock() - t_i)
+
+    robot.mouvement(time.clock() - t_i) # deplacement du robot
 
 pygame.quit()
