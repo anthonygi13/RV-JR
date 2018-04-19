@@ -1,6 +1,6 @@
-# Author: Giraudo Anthony, Kari Hichma, Mac Donald Kilian, Marhino Louise
+# Authors: Giraudo Anthony, Kari Hichma, Marinho Louise, Kilian Mac Donald
 # 19 février 2018
-# classes.py
+# classes_simulateur.py
 
 import pygame
 from pygame.locals import *
@@ -22,6 +22,7 @@ class Image(): # classe permettant de manipuler plus aisement les images a affic
         :param image: chemin vers une image rectangulaire
         :param dimensions: tuple de la forme (x, y) avec x la largeur de l image et y sa hauteur
         """
+
         self.image = pygame.image.load(image).convert()
         self.dimensions = dimensions
         self.coord = self.image.get_rect() # coordonnees dans la fenetre du point le plus en haut a gauche de l image
@@ -32,6 +33,7 @@ class Image(): # classe permettant de manipuler plus aisement les images a affic
         :param x: nouvelles coordonnees en x du point le plus en haut a gauche de l image
         :param y: nouvelles coordonnees en y du point le plus en haut a gauche de l image
         """
+
         self.coord.x = x
         self.coord.y = y
         self.coord_centre = self.coord.move(int(self.dimensions[0] / 2), int(self.dimensions[1] / 2))
@@ -41,11 +43,13 @@ class Image(): # classe permettant de manipuler plus aisement les images a affic
         :param x: nouvelles coordonnees en x du point au centre de l image
         :param y: nouvelles coordonnees en y du point au centre de l image
         """
+
         self.coord.x = x - int(self.dimensions[0] / 2)
         self.coord.y = y - int(self.dimensions[1] / 2)
         self.coord_centre = self.coord.move(int(self.dimensions[0] / 2), int(self.dimensions[1] / 2))
 
     def afficher(self): # affiche l image dans la fenetre
+
         fenetre.blit(self.image, self.coord)
 
 
@@ -59,6 +63,7 @@ class Capteur(Image): # classe pour gerer les images representant les capteurs
         :param image: chemin vers une image rectangulaire
         :param dimensions: tuple de la forme (x, y) avec x la largeur de l image et y sa hauteur
         """
+
         Image.__init__(self, image, dimensions)
 
     def est_dans_le_noir(self): # permet de savoir si le capteur detecte du noir ou pas
@@ -67,6 +72,7 @@ class Capteur(Image): # classe pour gerer les images representant les capteurs
          et False sinon.
          On suppose que le fond est un chemin noir sur fond blanc avec un chemin noir
         """
+
         rgb = tuple(fond.get_at((self.coord_centre.x, self.coord_centre.y)))
         for i in range(3):
             if rgb[i] == 255:
@@ -95,6 +101,7 @@ class Robot(): # classe permettant de gerer la simulation du comportement du rob
         :param coeff: coefficient multiplicatif pour les methodes tourner_gauche et tourner_droite et gerer_intersection
         :param largeur_chemin: largeur du chemin en pixels
         """
+
         self.roue_gauche = Image(image_roue, dimensions_image_roue)
         self.roue_droite = Image(image_roue, dimensions_image_roue)
         self.capteur_interieur_gauche = Capteur(image_capteur, dimensions_image_capteur)
@@ -121,6 +128,7 @@ class Robot(): # classe permettant de gerer la simulation du comportement du rob
         self.largeur_chemin = largeur_chemin
 
     def afficher(self): # affiche les images representant le robot
+
         self.roue_gauche.afficher()
         self.roue_droite.afficher()
         self.capteur_interieur_droit.afficher()
@@ -134,6 +142,7 @@ class Robot(): # classe permettant de gerer la simulation du comportement du rob
         :param x: nouvelles coordonnees en x du robot
         :param y: nouvelles coordonnees en y du robot
         """
+
         self.coord.x = x
         self.coord.y = y
         self.coord_exacte_x = x
@@ -162,6 +171,7 @@ class Robot(): # classe permettant de gerer la simulation du comportement du rob
         """
         :param angle: valeur en degre de l angle dont on veut faire tourner le robot
         """
+
         self.angle += angle
         x = self.coord.x
         y = self.coord.y
@@ -254,49 +264,72 @@ class Robot(): # classe permettant de gerer la simulation du comportement du rob
         :param vitesse_gauche: nouvelle vitesse de la roue droite en pixels par seconde
         :param vitesse_droite: nouvelle vitesse de la roue gauche en pixels par seconde
         """
+
         self.vitesse_gauche = vitesse_gauche
         self.vitesse_droite = vitesse_droite
 
     def tourner_gauche(self): # change les vitesses des roues pour rectifier la trajectoire du robot vers la gauche
+
         K = 2 * self.largeur_chemin
-        self.controle_moteur(self.vitesse * self.coeff * (2 * K - self.l) / (
-            2 * K + self.l), self.vitesse * self.coeff)
+        self.controle_moteur(self.vitesse * self.coeff * (2 * K - self.l) / (2 * K + self.l),
+                             self.vitesse * self.coeff)
 
     def tourner_droite(self): # change les vitesses des roues pour rectifier la trajectoire du robot vers la droite
+
         K = 2 * self.largeur_chemin
         self.controle_moteur(self.vitesse * self.coeff,
-                             self.vitesse * self.coeff * (2 * K - self.l) / (
-                                 2 * K + self.l))
+                             self.vitesse * self.coeff * (2 * K - self.l) / (2 * K + self.l))
         
     def demi_tour(self): # fait faire un demi tour au robot tant que le capteur central ne detecte pas de noir
+        """
+        :return: False si la touche d arret de demi tour n a pas ete pressee, False sinon
+        """
+
         self.controle_moteur(self.vitesse * self.coeff, -self.vitesse * self.coeff)
+        stop = False
         while not self.capteur_centre.est_dans_le_noir():
             t_i = time.clock()
             fenetre.blit(fond, (0, 0))
             self.afficher()
             pygame.display.flip()
-            self.mouvement(time.clock() - t_i)
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_d:  # stopper le robot en cas d appui sur la touche d
+                        stop = True
+                        print("d")
+            if stop:
+                return True
+            else:
+                self.mouvement(time.clock() - t_i)
+        return False
 
     def gerer_intersection(self, choix): # change les vitesses des roues pour que le robot aille dans la direction voulue a une intersection
         """
         :param choix: chaine de caracteres correspondant au choix de la direction a prendre a l intersection,
          "droite", "gauche" ou "tout droit"
         """
+
         if not choix in ["droite", "gauche", "tout droit"]:
             raise ValueError("Le choix n est pas valide")
+
         K = 102/109 * self.largeur_chemin
+
         if choix == "droite":
             self.controle_moteur(self.vitesse * self.coeff,
-                                 self.vitesse * self.coeff * (2 * K - self.l) / (
-                                 2 * K + self.l))
+                                 self.vitesse * self.coeff * (2 * K - self.l) / (2 * K + self.l))
+
         elif choix == "gauche":
-            self.controle_moteur(self.vitesse * self.coeff * (2 * K - self.l) / (
-                                 2 * K + self.l), self.vitesse * self.coeff)
+            self.controle_moteur(self.vitesse * self.coeff * (2 * K - self.l) / (2 * K + self.l),
+                                 self.vitesse * self.coeff)
+
         elif choix == "tout droit":
             self.controle_moteur(self.vitesse, self.vitesse)
 
     def tout_droit(self): # change les vitesses des roues pour que le robot aille tout droit a la vitesse self.vitesse
+
         self.controle_moteur(self.vitesse, self.vitesse)
 
     def stop(self): # stoppe le mouvement du robot
+
         self.controle_moteur(0, 0)
+
