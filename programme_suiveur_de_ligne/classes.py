@@ -103,7 +103,7 @@ class Robot:
     def gerer_intersection(self, choix):
         if choix == "droite":
             #self.controle_moteur(self.vitesse * self.coeff, -(self.vitesse * self.coeff * 0.3625)) #(l-d)/2l = 0.3625
-            self.controle_moteur(self.vitesse * self.coeff, -(self.vitesse * self.coeff * (1 - self.distance_roues / (11 * self.largeur_chemin / 10))))
+            self.controle_moteur(self.vitesse * self.coeff, self.vitesse * self.coeff * (2 * 4.275 * self.largeur_chemin - self.distance_roues) / (2 * 4.275 * self.largeur_chemin + self.distance_roues))
         elif choix == "gauche":
             self.controle_moteur(-(self.vitesse * self.coeff * 0.3625), self.vitesse * self.coeff)
         elif choix == "tout droit":

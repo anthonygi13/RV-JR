@@ -238,10 +238,15 @@ class Robot():
         self.vitesse_droite = vitesse_droite
 
     def tourner_gauche(self):
-        self.controle_moteur(0, self.vitesse * self.coeff)
-    
+        K = 2 * self.largeur_chemin
+        self.controle_moteur(self.vitesse * self.coeff * (2 * K - self.l) / (
+            2 * K + self.l), self.vitesse * self.coeff)
+
     def tourner_droite(self):
-        self.controle_moteur(self.vitesse * self.coeff, 0)
+        K = 2 * self.largeur_chemin
+        self.controle_moteur(self.vitesse * self.coeff,
+                             self.vitesse * self.coeff * (2 * K - self.l) / (
+                                 2 * K + self.l))
         
     def demi_tour(self):
         self.controle_moteur(self.vitesse * self.coeff, -self.vitesse * self.coeff)
@@ -253,10 +258,14 @@ class Robot():
             self.mouvement(time.clock() - t_i)
 
     def gerer_intersection(self, choix):
+        K = 102/109 * self.largeur_chemin
         if choix == "droite":
-            self.controle_moteur(self.vitesse * self.coeff, -(self.vitesse * self.coeff * (self.l - self.d) / (2 * self.l))) #(l-d)/2l = 0.3625 <- a changer, depend de l en fait si l depend pas de la largeur du chemin
+            self.controle_moteur(self.vitesse * self.coeff,
+                                 self.vitesse * self.coeff * (2 * K - self.l) / (
+                                 2 * K + self.l))
         elif choix == "gauche":
-            self.controle_moteur(-(self.vitesse * self.coeff * (self.l - self.d) / (2 * self.l)), self.vitesse * self.coeff)
+            self.controle_moteur(self.vitesse * self.coeff * (2 * K - self.l) / (
+                                 2 * K + self.l), self.vitesse * self.coeff)
         elif choix == "tout droit":
             self.controle_moteur(self.vitesse, self.vitesse)
 

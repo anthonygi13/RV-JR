@@ -9,30 +9,31 @@ from conversions import *
 from classes_v2 import *
 import time
 
+# images
 image_roue = "champi.png"
 image_capteur = "r2d2.jpg"
 dimensions_image_roue = (75, 75)
 dimensions_image_capteur = (49, 49)
 
+# parametres
 largeur_chemin = 40
-
 l = 4 * largeur_chemin # distance entre les deux roues en pixels
 d = (11 * largeur_chemin) // 10 # distance entre les capteurs gauche droite en pixels
 r = largeur_chemin # distance entre milieu entre les roues et milieu entre les capteurs gauche droite en pixels
 z = (3 * largeur_chemin) // 2 # distance entre milieu entre les deux roues et capteur central, en pixel
 h = 3 * largeur_chemin // 2 + r # distance entre milieu entre les deux roues et milieu entre les capteurs exterieur droit et exterieur gauche en pixels
 i = d * 2 # distance entre les capteurs exterieurs droits et exterieurs gauche en pixels
-
 coeff = 100
-vitesse_de_marche = pixel(0.01)
+vitesse_de_marche = pixel(0.2)
 choix = "droite"
 
 robot = Robot(image_roue, image_capteur, dimensions_image_roue, dimensions_image_capteur, l, d, r, z, h, i, vitesse_de_marche, coeff, largeur_chemin)
 
+# placement initial du robot
 robot.placer(0, 500)
 robot.rotation(3 * 90)
 
-# rend le noir transparent
+# rend le noir transparent sur les images correspondant aux roues et aux capteurs
 robot.roue_gauche.image.set_colorkey((0,0,0))
 robot.roue_droite.image.set_colorkey((0,0,0))
 robot.capteur_interieur_droit.image.set_colorkey((255, 255, 255))
@@ -43,22 +44,32 @@ robot.capteur_exterieur_gauche.image.set_colorkey((255, 255, 255))
 
 
 continuer = True
-while continuer:
+rotation = False
+stop = False
+while continuer: # boucle principale
     t_i = time.clock()
 
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT: # arreter le programme en cas de fermeture de la fenetre
             continuer = False
 
-    if event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_s:
-            robot.controle_moteur(0, 0)
-        if event.key == K_m:
-            robot.rotation(10)
-        if event.key == K_v:
-            robot.vitesse = pixel(0.2)
-        if event.key == K_r:
-            robot.vitesse = vitesse_de_marche
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_s: # stopper le robot en cas d appui sur la touche s
+                stop = True
+            if event.key == K_m: # rotation du robot en cas d appui sur la touche m
+                rotation = True
+
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_s: # arreter de stopper le robot en cas de relachement de la touche s
+                stop = False
+            if event.key == pygame.K_m: # arret de la rotation du robot en cas de relachement de la touche m
+                rotation = False
+
+    if stop:
+        robot.stop()
+
+    elif rotation:
+        robot.rotation(10)
 
     elif robot.capteur_interieur_gauche.est_dans_le_noir() and not robot.capteur_interieur_droit.est_dans_le_noir():
         robot.tourner_gauche()
@@ -66,9 +77,9 @@ while continuer:
     elif robot.capteur_interieur_droit.est_dans_le_noir() and not robot.capteur_interieur_gauche.est_dans_le_noir():
         robot.tourner_droite()
 
-    elif robot.capteur_interieur_gauche.est_dans_le_noir() and robot.capteur_exterieur_gauche.est_dans_le_noir() and\
-            robot.capteur_interieur_droit.est_dans_le_noir() and robot.capteur_exterieur_droit.est_dans_le_noir() and robot.capteur_centre.est_dans_le_noir():
-        robot.stop()
+    #elif robot.capteur_interieur_gauche.est_dans_le_noir() and robot.capteur_exterieur_gauche.est_dans_le_noir() and\
+    #        robot.capteur_interieur_droit.est_dans_le_noir() and robot.capteur_exterieur_droit.est_dans_le_noir() and robot.capteur_centre.est_dans_le_noir():
+    #    robot.stop()
 
     elif robot.capteur_interieur_gauche.est_dans_le_noir() and robot.capteur_interieur_droit.est_dans_le_noir() and robot.capteur_centre.est_dans_le_noir():
         robot.gerer_intersection(choix)
@@ -80,6 +91,7 @@ while continuer:
     else:
         robot.tout_droit()
 
+    # affichage des images deplacees
     fenetre.blit(fond, (0, 0))
     robot.afficher()
     pygame.display.flip()
