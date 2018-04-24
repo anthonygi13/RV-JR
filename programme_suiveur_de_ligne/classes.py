@@ -134,6 +134,8 @@ class Robot: # classe permettant de controler le robot
         stop = False
         self.controle_moteur(self.vitesse * self.coeff, -self.vitesse * self.coeff)
         while not self.capteur_centre.est_dans_le_noir():
+            pass
+            """
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_s:  # stopper le robot en cas d appui sur la touche s
@@ -141,6 +143,7 @@ class Robot: # classe permettant de controler le robot
             if stop:
                 self.stop()
                 return False
+            """
         return True
 
     def gerer_intersection(self, choix): # change les vitesses des roues pour que le robot aille dans la direction voulue a une intersection

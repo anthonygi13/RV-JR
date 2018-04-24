@@ -4,7 +4,6 @@
 
 import RPi.GPIO as GPIO
 import pygame
-import pygame
 from pygame.locals import *
 pygame.init()
 from classes import *
@@ -48,19 +47,19 @@ GPIO.add_event_detect(gpio_capteur_interieur_gauche, GPIO.RISING, callback=lambd
 continuer = True
 
 while continuer: # boucle principale
-
+    """
     for event in pygame.event.get(): # arreter le robot si la touche s est pressee
         if pygame.event.type == pygame.KEYDOWN:
             if pygame.event.key == pygame.K_s:
                 robot.stop()
                 continuer = False
-
+    """
     if continuer:
 
-        if robot.capteur_gauche.est_dans_le_noir() and not robot.capteur_droit.est_dans_le_noir():
+        if robot.capteur_interieur_gauche.est_dans_le_noir() and not robot.capteur_interieur_droit.est_dans_le_noir():
             robot.tourner_gauche()
 
-        elif robot.capteur_droit.est_dans_le_noir() and not robot.capteur_gauche.est_dans_le_noir():
+        elif robot.capteur_interieur_droit.est_dans_le_noir() and not robot.capteur_interieur_gauche.est_dans_le_noir():
             robot.tourner_droite()
 
         elif robot.capteur_interieur_gauche.est_dans_le_noir() and robot.capteur_exterieur_gauche.est_dans_le_noir() and\
@@ -68,10 +67,10 @@ while continuer: # boucle principale
             robot.stop()
             continuer = False
 
-        elif robot.capteur_gauche.est_dans_le_noir() and robot.capteur_droit.est_dans_le_noir() and robot.capteur_centre.est_dans_le_noir():
+        elif robot.capteur_interieur_gauche.est_dans_le_noir() and robot.capteur_interieur_droit.est_dans_le_noir() and robot.capteur_centre.est_dans_le_noir():
             robot.gerer_intersection(choix)
 
-        elif not robot.capteur_centre.est_dans_le_noir() and not robot.capteur_droit.est_dans_le_noir() and not robot.capteur_gauche.est_dans_le_noir():
+        elif not robot.capteur_centre.est_dans_le_noir() and not robot.capteur_interieur_droit.est_dans_le_noir() and not robot.capteur_interieur_gauche.est_dans_le_noir():
             continuer = robot.demi_tour()
 
         else:
