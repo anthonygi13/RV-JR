@@ -18,11 +18,11 @@ dimensions_image_capteur = (49, 49)
 # parametres
 largeur_chemin = 40
 l = 4 * largeur_chemin # distance entre les deux roues en pixels
-d = (11 * largeur_chemin) // 10 # distance entre les capteurs gauche droite en pixels
+d = (12 * largeur_chemin) // 10 # distance entre les capteurs gauche droite en pixels
 r = largeur_chemin # distance entre milieu entre les roues et milieu entre les capteurs gauche droite en pixels
 z = (3 * largeur_chemin) // 2 # distance entre milieu entre les deux roues et capteur central, en pixel
 h = 3 * largeur_chemin // 2 + r # distance entre milieu entre les deux roues et milieu entre les capteurs exterieur droit et exterieur gauche en pixels
-i = d * 2 # distance entre les capteurs exterieurs droits et exterieurs gauche en pixels
+i = (d * 3) // 2 # distance entre les capteurs exterieurs droits et exterieurs gauche en pixels
 coeff = 100
 vitesse_de_marche = pixel(0.2)
 choix = "droite"
@@ -72,7 +72,6 @@ while continuer: # boucle principale
             if event.key == pygame.K_d: # arret de l empechement de faire demi tour en cas de relachement de la touche d
                 pas_demi_tour = False
 
-
     if stop:
         robot.stop()
 
@@ -81,23 +80,29 @@ while continuer: # boucle principale
 
     elif robot.capteur_interieur_gauche.est_dans_le_noir() and not robot.capteur_interieur_droit.est_dans_le_noir():
         robot.tourner_gauche()
+        print("pas")
 
     elif robot.capteur_interieur_droit.est_dans_le_noir() and not robot.capteur_interieur_gauche.est_dans_le_noir():
         robot.tourner_droite()
+        print("pas")
 
     elif robot.capteur_interieur_gauche.est_dans_le_noir() and robot.capteur_exterieur_gauche.est_dans_le_noir() and\
             robot.capteur_interieur_droit.est_dans_le_noir() and robot.capteur_exterieur_droit.est_dans_le_noir() and robot.capteur_centre.est_dans_le_noir():
         robot.stop()
+        print("pas")
 
     elif robot.capteur_interieur_gauche.est_dans_le_noir() and robot.capteur_interieur_droit.est_dans_le_noir() and robot.capteur_centre.est_dans_le_noir():
         robot.gerer_intersection(choix)
+        print("intersection")
 
     elif not robot.capteur_centre.est_dans_le_noir() and not robot.capteur_interieur_droit.est_dans_le_noir() and not robot.capteur_interieur_gauche.est_dans_le_noir() and not pas_demi_tour:
         pas_demi_tour = robot.demi_tour()
         t_i = time.clock()
+        print("pas")
 
     else:
         robot.tout_droit()
+        print("pas")
 
     # affichage des images
     fenetre.blit(fond, (0, 0))

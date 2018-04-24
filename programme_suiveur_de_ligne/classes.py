@@ -152,7 +152,7 @@ class Robot: # classe permettant de controler le robot
         if not choix in ["droite", "gauche", "tout droit"]:
             raise ValueError("Le choix n est pas valide")
 
-        K = 102 / 109 * self.largeur_chemin
+        K = 1 * self.largeur_chemin
 
         if choix == "droite":
             self.controle_moteur(self.vitesse * self.coeff,

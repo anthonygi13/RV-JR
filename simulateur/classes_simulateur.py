@@ -296,7 +296,6 @@ class Robot(): # classe permettant de gerer la simulation du comportement du rob
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_d:  # stopper le robot en cas d appui sur la touche d
                         stop = True
-                        print("d")
             if stop:
                 return True
             else:
@@ -312,7 +311,8 @@ class Robot(): # classe permettant de gerer la simulation du comportement du rob
         if not choix in ["droite", "gauche", "tout droit"]:
             raise ValueError("Le choix n est pas valide")
 
-        K = 102/109 * self.largeur_chemin
+        #K = 102/109 * self.largeur_chemin
+        K = 1 * self.largeur_chemin
 
         if choix == "droite":
             self.controle_moteur(self.vitesse * self.coeff,
