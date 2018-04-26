@@ -1,4 +1,4 @@
-# Authors: Giraudo Anthony, Kari Hichma, Marinho Louise, Kilian Mac Donald
+# Authors: Anthony Giraudo, Kari Hichma, Kilian Mac Donald, Louise Marinho
 # 15 mars 2018
 # main_loop.py
 
@@ -47,13 +47,13 @@ GPIO.add_event_detect(gpio_capteur_interieur_gauche, GPIO.RISING, callback=lambd
 continuer = True
 
 while continuer: # boucle principale
-    """
+
     for event in pygame.event.get(): # arreter le robot si la touche s est pressee
-        if pygame.event.type == pygame.KEYDOWN:
-            if pygame.event.key == pygame.K_s:
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_s:
                 robot.stop()
                 continuer = False
-    """
+
     if continuer:
 
         if robot.capteur_interieur_gauche.est_dans_le_noir() and not robot.capteur_interieur_droit.est_dans_le_noir():

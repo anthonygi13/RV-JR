@@ -1,4 +1,4 @@
-# Authors: Giraudo Anthony, Kari Hichma, Marinho Louise, Kilian Mac Donald
+# Authors: Anthony Giraudo, Kari Hichma, Kilian Mac Donald, Louise Marinho
 # 23 mars 2018
 # main_loop_simulateur.py
 
@@ -80,29 +80,23 @@ while continuer: # boucle principale
 
     elif robot.capteur_interieur_gauche.est_dans_le_noir() and not robot.capteur_interieur_droit.est_dans_le_noir():
         robot.tourner_gauche()
-        print("pas")
 
     elif robot.capteur_interieur_droit.est_dans_le_noir() and not robot.capteur_interieur_gauche.est_dans_le_noir():
         robot.tourner_droite()
-        print("pas")
 
     elif robot.capteur_interieur_gauche.est_dans_le_noir() and robot.capteur_exterieur_gauche.est_dans_le_noir() and\
             robot.capteur_interieur_droit.est_dans_le_noir() and robot.capteur_exterieur_droit.est_dans_le_noir() and robot.capteur_centre.est_dans_le_noir():
         robot.stop()
-        print("pas")
 
     elif robot.capteur_interieur_gauche.est_dans_le_noir() and robot.capteur_interieur_droit.est_dans_le_noir() and robot.capteur_centre.est_dans_le_noir():
         robot.gerer_intersection(choix)
-        print("intersection")
 
     elif not robot.capteur_centre.est_dans_le_noir() and not robot.capteur_interieur_droit.est_dans_le_noir() and not robot.capteur_interieur_gauche.est_dans_le_noir() and not pas_demi_tour:
         pas_demi_tour = robot.demi_tour()
         t_i = time.clock()
-        print("pas")
 
     else:
         robot.tout_droit()
-        print("pas")
 
     # affichage des images
     fenetre.blit(fond, (0, 0))
