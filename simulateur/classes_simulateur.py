@@ -270,19 +270,15 @@ class Robot(): # classe permettant de gerer la simulation du comportement du rob
 
     def tourner_gauche(self): # change les vitesses des roues pour rectifier la trajectoire du robot vers la gauche
 
-        #K = 2 * self.largeur_chemin
-        #self.controle_moteur(self.vitesse * self.coeff * (2 * K - self.l) / (2 * K + self.l),
-        #                     self.vitesse * self.coeff)
-
-        self.controle_moteur(-self.vitesse * self.coeff, self.vitesse * self.coeff)
+        K = 2 * self.largeur_chemin
+        self.controle_moteur(self.vitesse * self.coeff * (2 * K - self.l) / (2 * K + self.l),
+                             self.vitesse * self.coeff)
 
     def tourner_droite(self): # change les vitesses des roues pour rectifier la trajectoire du robot vers la droite
 
-        #K = 2 * self.largeur_chemin
-        #self.controle_moteur(self.vitesse * self.coeff,
-        #                     self.vitesse * self.coeff * (2 * K - self.l) / (2 * K + self.l))
-
-        self.controle_moteur(self.vitesse * self.coeff, -self.vitesse * self.coeff)
+        K = 2 * self.largeur_chemin
+        self.controle_moteur(self.vitesse * self.coeff,
+                             self.vitesse * self.coeff * (2 * K - self.l) / (2 * K + self.l))
 
     def demi_tour(self): # fait faire un demi tour au robot tant que le capteur central ne detecte pas de noir
         """
