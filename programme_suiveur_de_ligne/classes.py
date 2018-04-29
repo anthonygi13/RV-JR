@@ -116,13 +116,13 @@ class Robot: # classe permettant de controler le robot
 
     def tourner_gauche(self): # change les vitesses des roues pour rectifier la trajectoire du robot vers la gauche
 
-        K = 2 * self.largeur_chemin
+        K = 6 * self.largeur_chemin / 10
         self.controle_moteur(self.vitesse * self.coeff * (2 * K - self.distance_roues) / (2 * K + self.distance_roues),
                              self.vitesse * self.coeff)
 
     def tourner_droite(self): # change les vitesses des roues pour rectifier la trajectoire du robot vers la droite
 
-        K = 2 * self.largeur_chemin
+        K = 6 * self.largeur_chemin / 10
         self.controle_moteur(self.vitesse * self.coeff,
                              self.vitesse * self.coeff * (2 * K - self.distance_roues) / (2 * K + self.distance_roues))
 
